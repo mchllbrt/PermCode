@@ -1,0 +1,88 @@
+package permlab.examples;
+
+import permlab.PermClass;
+import permlab.Permutation;
+import permlab.property.MinusIndecomposable;
+import permlab.property.PermProperty;
+import permlab.property.PlusIndecomposable;
+
+/**
+ * From PP2012, challenge is to enumerate 
+ * Av(4231,35142, 42513, 351624)
+ * Preliminary investigation suggests the simples satisfy a simple
+ * linear recurrence s_n = 3 s_{n-1} +/- 2.
+ * Start by looking at leftmost deleteable and how they build up.
+ * @author Michael Albert
+ */
+public class AlexandersClass {
+
+    public static void main(String[] args) {
+
+//        SimplePermClass sc = new SimplePermClass(
+//                "4231",
+//                "35142",
+//                "42513",
+//                "351624");
+
+        PermClass sc = new PermClass(
+                "4231",
+                "35142",
+                "42513",
+                "351624");
+        
+        PermProperty mi = new MinusIndecomposable();
+        PermProperty pi = new PlusIndecomposable();
+        
+        for(int i = 4; i <= 10; i++) {
+            int count = 0;
+            for(Permutation p : sc.getPerms(i)) {
+                if (mi.isSatisfiedBy(p) && pi.isSatisfiedBy(p)) count++;
+            }
+            System.out.println(i + " " + count);
+        }
+    }
+}
+        
+//     
+//        int n = 10;
+//        HashSet<Permutation> extPatterns = new HashSet<Permutation>();
+//        for(Permutation p : sc.getPerms(n)) {
+//            int[] ext = new int[4];
+//            ext[0] = p.elements[0];
+//            int j = 1;
+//            for(int i = 1; i < p.length()-1; i++) {
+//                if (p.elements[i] == 0 || p.elements[i] == p.length()-1) {
+//                    ext[j] = p.elements[i];
+//                    j++;
+//                }
+//                if (j == 3) break;
+//            }
+//            ext[3] = p.elements[p.length()-1];
+//            extPatterns.add(new Permutation(ext));
+//        }
+//        
+//        for(Permutation p : extPatterns) System.out.println(p);
+//        
+//        Griddable g = new Griddable(
+//                new PermPropertyUtilities[][] {
+//                    {PermPropertyUtilities.INCREASING},
+//                    {PermPropertyUtilities.EMPTY, PermPropertyUtilities.EMPTY, PermPropertyUtilities.EMPTY, new BoundedLength(1)},
+//                    {PermPropertyUtilities.DECREASING},
+//                    {PermPropertyUtilities.INCREASING},
+//                    {PermPropertyUtilities.EMPTY, PermPropertyUtilities.INCREASING, PermPropertyUtilities.DECREASING, PermPropertyUtilities.EMPTY, PermPropertyUtilities.INCREASING}
+//                    
+//                });
+//        
+//        for(int s = 4; s <= 6; s++) {
+//            int count = 0;
+//            for(Permutation p : new Permutations(s)) {
+//                if (PermUtilities.SIMPLE.isSatisfiedBy(p) && 
+//                        (g.isSatisfiedBy(p) || g.isSatisfiedBy(p.inverse()))) {
+//                    System.out.println(p);
+//                    count++;
+//                }
+//            }
+//            System.out.println(s + " " + count);
+//        }
+//    }
+

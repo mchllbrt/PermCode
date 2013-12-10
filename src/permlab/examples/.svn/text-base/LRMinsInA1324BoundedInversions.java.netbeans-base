@@ -1,0 +1,150 @@
+package permlab.examples;
+
+import java.util.ArrayList;
+import permlab.PermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.property.BoundedInversions;
+import permlab.property.HereditaryPropertyAdapter;
+import permlab.property.PermProperty;
+
+/**
+ *
+ * @author Michael Albert
+ */
+public class LRMinsInA1324BoundedInversions {
+
+    public static void main(String[] args) {
+       minCountTable(10);
+    }
+    
+    public static void boundedClass() {
+       int bound = 6;
+       int maxLength = bound+3;
+       ArrayList<Permutation> basis = new ArrayList<Permutation>();
+        basis.add(new Permutation("1324"));
+        HereditaryPropertyAdapter bi = new BoundedInversions(bound);
+        for (int n = 1; n <= maxLength; n++) {
+            PermClass c = new PermClass(basis);
+            for (Permutation p : c.getPerms(n)) {
+                if (bi.isSatisfiedBy(p)) {
+                    boolean bad = true;
+                    for(int i = 0; i <= p.length() && bad; i++) {
+                        for(int v = 0; v <= p.length() && bad; v++) {
+                            Permutation q = PermUtilities.insert(p,i,v);
+                            if (bi.isSatisfiedBy(q) && c.containsPermutation(q)) {
+                                bad = false;
+                            }
+                        }
+                    }
+                    if (bad) {
+                        System.out.println(p);
+                    }
+                } else {
+                    // System.out.println("Checking " + p);
+                    if (isNewBasisElement(p, bi)) {
+                        basis.add(p);
+                        // System.out.println("Basis element: " + p);
+                    }
+                }
+            }
+            System.out.println();
+        }
+    }
+    
+    public static void listTwoMins() {
+       int bound = 6;
+       int maxLength = bound+3;
+       int numMins = 2;
+       int secondMinPosition = 2;
+        ArrayList<Permutation> basis = new ArrayList<Permutation>();
+        basis.add(new Permutation("1324"));
+        HereditaryPropertyAdapter bi = new BoundedInversions(bound);
+        for (int n = 1; n <= maxLength; n++) {
+            PermClass c = new PermClass(basis);
+            for (Permutation p : c.getPerms(n)) {
+                if (bi.isSatisfiedBy(p)) {
+                    if (inversionCount(p) == bound && LRMin(p) == numMins && p.elements[secondMinPosition] == 0) {
+                        System.out.println(p);
+                    }
+                } else {
+                    // System.out.println("Checking " + p);
+                    if (isNewBasisElement(p, bi)) {
+                        basis.add(p);
+                        // System.out.println("Basis element: " + p);
+                    }
+                }
+            }
+            System.out.println();
+        }
+    }
+    
+    public static void minCountTable(int bound) {
+        int maxLength = bound+3;
+        ArrayList<Permutation> basis = new ArrayList<Permutation>();
+        basis.add(new Permutation("1324"));
+        HereditaryPropertyAdapter bi = new BoundedInversions(bound);
+        for (int n = 1; n <= maxLength; n++) {
+            PermClass c = new PermClass(basis);
+            int[] minCounts = new int[bound];
+            for (Permutation p : c.getPerms(n)) {
+                if (bi.isSatisfiedBy(p)) {
+                    if (true || inversionCount(p) == bound) {
+                        minCounts[LRMin(p)]++;
+                    }
+                } else {
+                    // System.out.println("Checking " + p);
+                    if (isNewBasisElement(p, bi)) {
+                        basis.add(p);
+                        // System.out.println("Basis element: " + p);
+                    }
+                }
+            }
+            for (int i = 1; i < bound; i++) {
+                System.out.print((minCounts[i] + "          ").substring(0, 10));
+            }
+            System.out.println();
+        }
+
+    }
+
+    public static int LRMin(Permutation p) {
+        int minCount = 1;
+        int min = p.elements[0];
+        for (int i = 1; i < p.elements.length; i++) {
+            if (p.elements[i] < min) {
+                minCount++;
+                min = p.elements[i];
+            }
+        }
+        return minCount;
+    }
+
+    public static int inversionCount(Permutation p) {
+        int inversions = 0;
+        for (int i = 0; i < p.elements.length; i++) {
+            for (int j = i + 1; j < p.elements.length; j++) {
+                if (p.elements[i] > p.elements[j]) {
+                    inversions++;
+                }
+
+            }
+        }
+        return inversions;
+    }
+
+    static boolean isNewBasisElement(Permutation p, PermProperty c) {
+
+        if (c.isSatisfiedBy(p)) {
+            // System.out.println("In class");
+            return false;
+        }
+        for (int i = 0; i < p.length(); i++) {
+            if (!c.isSatisfiedBy(PermUtilities.delete(p, i))) {
+                // System.out.append("Deletion at " + i + " not in class.");
+                return false;
+            }
+        }
+        return true;
+    }
+}

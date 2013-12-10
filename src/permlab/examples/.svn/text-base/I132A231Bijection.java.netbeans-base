@@ -1,0 +1,271 @@
+package permlab.examples;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+import permlab.property.HereditaryProperty;
+import permlab.property.PermPropertyUtilities;
+
+/**
+ * Define an odd bijection between 132 involving, 231 avoiding permutations
+ * and 132 avoiding, 231 involving permutations and investigate its properties
+ * vis a vis stack sorting.
+ * 
+ * @author Michael Albert
+ */
+public class I132A231Bijection {
+
+    public static void main(String[] args) {
+        // countAvoiders(10);
+        // detailedCheck(10);
+        tabulate(6);
+
+        
+    }
+
+    /*
+     * The bijection works as follows: begin from an instance of 132 with
+     * minimal 2. Now find the leftmost 3. There is an interval of 1's to the
+     * left of the 3 and an interval of 2's to the right. Shuffle the values
+     * so that the pattern in each interval is preserved, but the elements to
+     * the left are now larger than the elements in the right. Recursively do
+     * this (if necessary) in the interval to the right.
+     * 
+     * Repeat this procedure until there are no 132's left.
+     *
+     * First we define the local switching map, i.e. the one that works on a single
+     * interval.
+     * 
+     * Find the minimum 2 of a 132 in the interval
+     * Find its leftmost 3
+     * Find the intervals of 1's before and 2's after (this assumes that there
+     * is no 231 whose 3 is <= the 2)
+     * Switch their values
+     * Recurse on the right hand end
+     */
+    public static boolean localSwitch(int[] e, int low, int high) {
+        // System.out.println(Arrays.toString(e));
+        int posMin2 = leastTwo(e, low, high);
+        if (posMin2 < 0) {
+            return false;
+        }
+        int pos3 = leftmostThree(posMin2, e, low, high);
+        int l1 = leftmostOne(pos3, e, low, high);
+        int r2 = rightmostTwo(pos3, e[posMin2], e, low, high);
+        // System.out.println(l1 + " " + pos3 + " " + r2);
+        int min1 = Integer.MAX_VALUE;
+        int a = pos3 - l1;
+        int b = r2 - pos3;
+        for (int i = l1; i < pos3; i++) {
+            e[i] = e[i] + b;
+        }
+        for (int i = pos3 + 1; i <= r2; i++) {
+            e[i] = e[i] - a;
+        }
+        // System.out.println(Arrays.toString(e) + " " + (pos3+1) + " " + (r2+1));
+        if (leastTwo(e, pos3 + 1, r2 + 1) > 0) {
+            localSwitch(e, pos3 + 1, r2 + 1);
+        }
+        return true;
+    }
+
+    public static void totalSwitch(int[] e) {
+        while (localSwitch(e, 0, e.length)) {
+            // System.out.println(Arrays.toString(e));
+        }
+    }
+
+    public static boolean isTwo(int i, int[] e, int low, int high) {
+        int j = i - 1;
+        while (j >= low + 1 && e[j] < e[i]) {
+            j--;
+        }
+        if (j == low) {
+            return false;
+        }
+        j--;
+        while (j >= low && e[j] > e[i]) {
+            j--;
+        }
+        return j >= low;
+    }
+
+    public static int leftmostThree(int pos2, int[] e, int low, int high) {
+        int p1 = low;
+        while (p1 < pos2 && e[p1] > e[pos2]) {
+            p1++;
+        }
+        int p3 = p1 + 1;
+        while (p3 < pos2 && e[p3] < e[pos2]) {
+            p3++;
+        }
+        return p3;
+    }
+
+    public static int leftmostOne(int pos3, int[] e, int low, int high) {
+        int i = low;
+        while (i < pos3 && e[i] > e[pos3]) {
+            i++;
+        }
+        return i;
+    }
+
+    public static int rightmostTwo(int pos3, int min2, int[] e, int low, int high) {
+        int i = high - 1;
+        while (i > pos3 && (e[i] > e[pos3] || e[i] < min2)) {
+            i--;
+        }
+        return i;
+    }
+
+    private static int leastTwo(int[] e, int low, int high) {
+        int min2 = Integer.MAX_VALUE;
+        int pos2 = -1;
+        for (int i = low + 2; i < high; i++) {
+            if (e[i] < min2 && isTwo(i, e, low, high)) {
+                min2 = e[i];
+                pos2 = i;
+            }
+        }
+        return pos2;
+    }
+
+    public static Permutation S(Permutation p) {
+        Deque<Integer> stack = new ArrayDeque<Integer>();
+        int[] r = new int[p.length()];
+        int index = 0;
+        for (int i : p.elements) {
+            while (stack.size() != 0 && i > stack.peek()) {
+                r[index++] = stack.pop();
+            }
+            stack.push(i);
+        }
+        while (stack.size() > 0) {
+            r[index++] = stack.pop();
+        }
+        return new Permutation(r);
+    }
+
+    public static Permutation R(Permutation p) {
+        return p.reverse();
+    }
+
+    public static void countAvoiders(int n) {
+        HereditaryProperty a231 = PermUtilities.avoidanceTest("231");
+        HereditaryProperty a132 = PermUtilities.avoidanceTest("132");
+        HashMap<Permutation, Integer> outs = new HashMap<Permutation, Integer>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(S(p));
+            if (outs.containsKey(q)) {
+                outs.put(q, outs.get(q) + 1);
+            } else {
+                outs.put(q, 1);
+            }
+        }
+        System.out.println(outs.size());
+        System.out.println("Involving 132, avoiding 231");
+        boolean allGood = true;
+        int a231Count = 0;
+        int a132Count = 0;
+        for (Permutation q : outs.keySet()) {
+            if (a231.isSatisfiedBy(q) && !a132.isSatisfiedBy(q)) {
+                a231Count++;
+                int[] bqe = new int[q.elements.length];
+                System.arraycopy(q.elements, 0, bqe, 0, q.elements.length);
+                totalSwitch(bqe);
+                Permutation bq = new Permutation(bqe);
+                if (!outs.keySet().contains(bq)) {
+                    System.out.println(q + " in, " + bqe + " out.");
+                    allGood = false;
+                } else {
+                    System.out.println((outs.get(q) + "       ").substring(0, 6)
+                            + (outs.get(bq) + "       ").substring(0, 6) + q + ", " + bq
+                            + " " + (outs.get(q).equals(outs.get(bq))));
+                    allGood &= outs.get(q).equals(outs.get(bq));
+                }
+
+            }
+
+            if (!a231.isSatisfiedBy(q) && a132.isSatisfiedBy(q)) {
+                a132Count++;
+            }
+        }
+        System.out.println(allGood ? "All good" : "Problems");
+        System.out.println(a231Count + " " + a132Count);
+
+    }
+
+    public static void detailedCheck(int n) {
+        HereditaryProperty a231 = PermUtilities.avoidanceTest("231");
+        HereditaryProperty a132 = PermUtilities.avoidanceTest("132");
+        HashMap<Permutation, HashSet<Permutation>> outs = new HashMap<Permutation, HashSet<Permutation>>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(R(S(p)));
+            HashSet<Permutation> newQ = new HashSet<Permutation>();
+            if (outs.containsKey(q)) {
+                newQ = outs.get(q);
+            }
+            newQ.add(p);
+            outs.put(q, newQ);
+        }
+        for (Permutation q : outs.keySet()) {
+            if (a231.isSatisfiedBy(q) && !a132.isSatisfiedBy(q)) {
+                int[] sm = switchMap(q);
+                Permutation bq = relabel(q, sm);
+                for (Permutation r : outs.get(q)) {
+                    if (!outs.get(bq).contains(relabel(r, sm))) {
+                        System.out.println("Counterexample");
+                        System.out.println(q);
+                        System.out.println(bq);
+                        System.out.println(r);
+                        System.out.println(relabel(r, sm));
+                        System.exit(1);
+                    }
+                }
+            }
+        }
+        System.out.println("All good " + n);
+    }
+    
+    
+
+    public static int[] switchMap(Permutation p) {
+        int[] bp = new int[p.elements.length];
+        System.arraycopy(p.elements, 0, bp, 0, bp.length);
+        totalSwitch(bp);
+        int[] result = new int[bp.length];
+        for (int i = 0; i < result.length; i++) {
+            result[p.elements[i]] = bp[i];
+        }
+        return result;
+    }
+
+    public static Permutation relabel(Permutation p, int[] labels) {
+        int[] newElements = new int[p.length()];
+        for (int i = 0; i < newElements.length; i++) {
+            newElements[i] = labels[p.elements[i]];
+        }
+        return new Permutation(newElements);
+    }
+
+    private static void tabulate(int n) {
+        HereditaryProperty a231 = PermUtilities.avoidanceTest("231");
+        HereditaryProperty a132 = PermUtilities.avoidanceTest("132");
+        for(Permutation p : new Permutations(n)) {
+            if (a231.isSatisfiedBy(p) && !a132.isSatisfiedBy(p)) {
+                System.out.println(p + " " + P(p));
+            }
+        }
+    }
+
+    private static Permutation P(Permutation p) {
+        int[] e = new int[p.length()];
+        System.arraycopy(p.elements, 0, e, 0, e.length);
+        totalSwitch(e);
+        return new Permutation(e);
+    }
+}

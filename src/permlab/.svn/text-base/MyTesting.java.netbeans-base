@@ -1,0 +1,109 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab;
+
+import permlab.property.AvoidanceTest;
+import permlab.property.PermProperty;
+import permlab.property.Universal;
+
+/**
+ *
+ * @author mbelton
+ */
+public class MyTesting {
+
+    public static void main(String[] args) {
+
+//        UniversalPermClass c = new UniversalPermClass(5);
+//        for(Permutation p : new Permutations(c, 3, 4)) {
+//            System.out.println(p);
+//        }
+
+//        for(Permutation p : new UniversalPermClass(5)) {
+//            System.out.println(p);
+//        }
+
+
+//        InvolutionPermClass c2 = new InvolutionPermClass();
+//        PermProperty a123 = AvoidanceTest.getTest("123");
+//        for(Permutation p : new Permutations(c2, 3, a123)) {
+//            System.out.println(p);
+//        }
+//        
+//        InvolutionPermClass c3 = new InvolutionPermClass();
+//        for(Permutation p : new Permutations(c3, 3,5, PermUtilities.SIMPLE)) {
+//            System.out.println(p);
+//        }
+//        
+//        
+//        for(Permutation p : new Permutations(3, 6, PermUtilities.SIMPLE)){
+//            System.out.println(p);
+//        }
+//        
+//        for(Permutation p : new Permutations(3, 4, AvoidanceTest.getTest("123"))){
+//            System.out.println(p);
+//        }
+//        
+
+//        PermClass c2 = new PermClass("321");
+//        for(Permutation p : new Permutations(c2, 3, AvoidanceTest.getTest("123"))) {
+//            System.out.println(p);
+//        }
+//        
+//        System.out.println("\n\n---\n---\n");
+        PermutationClass c3 = new PermutationClass("321");
+        for (Permutation p : new Permutations(c3, 3, AvoidanceTest.getTest("123"))) {
+            System.out.println(p);
+        }
+
+        System.out.println("\n\n---\n---\n");
+        int count = 0;
+        for (Permutation p : new Permutations(c3, 9, PermUtilities.SIMPLE)) {
+            //System.out.println(p);
+            count++;
+        }
+        System.out.println(count);
+
+
+
+//        System.out.println("\n\n---\n---\n");
+//        int count = 0;
+//        for(Permutation p : new Permutations(c3, 12, PermUtilities.SIMPLE)) {
+//            //System.out.println(p);
+//            count++;
+//        }
+//        System.out.println(count);
+//        
+//        System.out.println("\n\n---\n---\n");
+//        count = 0;
+//        for(Permutation p : new Permutations(c3, 12, AvoidanceTest.getTest("231"))) {
+//            //System.out.println(p);
+//            count++;
+//        }
+//        System.out.println(count);
+//        
+//        System.out.println("\n\n---\n---\n");
+//        count = 0;
+//        for(Permutation p : new Permutations(c3, 11, 12, AvoidanceTest.getTest("231"))) {
+//            //System.out.println(p);
+//            count++;
+//        }
+//        System.out.println(count);
+
+
+
+//        
+//        System.out.println("\n\n---\n---\n");
+//        UniversalPermClass c = new UniversalPermClass(5);
+//        int count = 0;
+//        for(Permutation p : new Permutations(c, 9)) {
+//            count++;
+//        }
+//        System.out.println(count);
+
+
+
+    }
+}

@@ -1,0 +1,18 @@
+package permlab.examples;
+
+import permlab.PermClass;
+import permlab.Permutation;
+
+/**
+ * Which extra basis element keep the 4231 avoiders 'large'?
+ * @author Michael Albert
+ */
+public class Large4231Subclasses {
+
+    public static void main(String[] args) {
+        PermClass a4231 = new PermClass(new Permutation("4231"));
+        for(Permutation p : a4231.getPerms(5)) {
+            PermClass b = new PermClass(new Permutation("4231"), p);
+        }
+    }
+}

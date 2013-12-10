@@ -1,0 +1,50 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.HashSet;
+import permlab.PermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class StacksInSeries {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        // This has to come out of the stack
+        PermClass stack2 = new PermClass("321","231");
+        // The one permutation a stack can't do is (by position) 1->2, 2->3, 3->1
+        // The one permutation a stack can't undo is 1->3, 2->1, 3->2
+        PermClass stack = new PermClass("231");
+        HashSet<Permutation> basis = new HashSet<Permutation>();
+        PermClass theClass = new PermClass(basis);
+        for(int n = 3; n <= 12; n++) {
+            HashSet<Permutation> comp = new HashSet<Permutation>();
+            for (Permutation p : stack2.getPerms(n)) {
+                for (Permutation q: stack.getPerms(n)) {
+                    comp.add(PermUtilities.compose(q,p));
+                }
+            }
+            System.out.println(n + " " + comp.size());
+            for(Permutation s : theClass.getPerms(n)) {
+                if (!comp.contains(s)) {
+                    System.out.println(s);
+                    basis.add(s);
+                }
+               
+            }
+            theClass = new PermClass(basis);
+        }
+
+    }
+}

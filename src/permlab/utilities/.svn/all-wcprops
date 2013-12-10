@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/permlab/!svn/ver/92/PermLab/src/permlab/utilities
+END
+InvolutionUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/permlab/!svn/ver/93/PermLab/src/permlab/utilities/InvolutionUtilities.java
+END
+ExportType.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/permlab/!svn/ver/92/PermLab/src/permlab/utilities/ExportType.java
+END
+FileUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/permlab/!svn/ver/66/PermLab/src/permlab/utilities/FileUtilities.java
+END
+PaintUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/permlab/!svn/ver/92/PermLab/src/permlab/utilities/PaintUtilities.java
+END
+RestrictedPermutation.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/permlab/!svn/ver/93/PermLab/src/permlab/utilities/RestrictedPermutation.java
+END
+Composition.java
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/svn/permlab/!svn/ver/2/PermLab/src/permlab/utilities/Composition.java
+END
+Multisets.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/permlab/!svn/ver/66/PermLab/src/permlab/utilities/Multisets.java
+END
+IntPair.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svn/permlab/!svn/ver/66/PermLab/src/permlab/utilities/IntPair.java
+END
+NumberList.java
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/permlab/!svn/ver/2/PermLab/src/permlab/utilities/NumberList.java
+END
+ExportInterface.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/permlab/!svn/ver/92/PermLab/src/permlab/utilities/ExportInterface.java
+END
+PermPropertyUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/svn/permlab/!svn/ver/93/PermLab/src/permlab/utilities/PermPropertyUtilities.java
+END
+IOUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/permlab/!svn/ver/93/PermLab/src/permlab/utilities/IOUtilities.java
+END
+Combinations.java
+K 25
+svn:wc:ra_dav:version-url
+V 72
+/svn/permlab/!svn/ver/66/PermLab/src/permlab/utilities/Combinations.java
+END
+HereditaryUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/permlab/!svn/ver/93/PermLab/src/permlab/utilities/HereditaryUtilities.java
+END
+UIUtilities.java
+K 25
+svn:wc:ra_dav:version-url
+V 71
+/svn/permlab/!svn/ver/92/PermLab/src/permlab/utilities/UIUtilities.java
+END

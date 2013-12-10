@@ -1,0 +1,446 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.utilities;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.PrintStream;
+import javax.imageio.ImageIO;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.SimpleDoc;
+import javax.print.StreamPrintService;
+import javax.print.StreamPrintServiceFactory;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.ui.ExportDialog;
+import permlab.ui.StaticPermFrame;
+import permlab.ui.TextFrame;
+import static permlab.utilities.ExportInterface.fileChooser;
+
+/**
+ *
+ * @author mbelton
+ */
+public enum ExportType implements ExportInterface {
+
+    PSTricks {
+        private RestrictedPermutation restPerm;
+        private Permutation p;
+        private int DX;
+        private int DY;
+        private int width;
+        private TextFrame exportFrame;
+        private StaticPermFrame parent;
+
+        @Override
+        public void export(StaticPermFrame parent, RestrictedPermutation restPerm) {
+            this.parent = parent;
+            this.restPerm = restPerm;
+            this.p = restPerm.getPerm();
+            this.DX = restPerm.getDX();
+            this.DY = restPerm.getDY();
+            this.width = restPerm.getWidth();
+            StringBuilder result = new StringBuilder();
+            result.append("%ToPStricks output\n");
+            result.append(PSTricksPreamble());
+            result.append("%Forbidden regions\n");
+            for (int i = 0; i <= p.length(); i++) {
+                for (int j = 0; j <= p.length(); j++) {
+                    if (restPerm.propertiesForbid(i, j)) {
+                        result.append(PSTricksDarkGrayRectangle(i, j));
+                    } else if (restPerm.userForbids(i, j)) {
+                        result.append(PSTricksLightGrayRectangle(i, j));
+                    }
+                }
+            }
+            boolean allGood = restPerm.hasProperties() && (!restPerm.simple || PermUtilities.isSimple(p));
+            result.append("%Points\n");
+            for (int i = 0; i < p.length(); i++) {
+                result.append(PSTricksCircle(i, allGood));
+            }
+            result.append("%Gridlines\n");
+            for (int i = 0; i <= p.length() + 1; i++) {
+                result.append(PSTricksLines(i));
+            }
+            result.append("\\end{pspicture}\n\n");
+
+            if (!ExportDialog.saveAsFile) {
+                if (exportFrame == null) {
+                    exportFrame = new TextFrame(result.toString());
+                    exportFrame.setLocation(parent.getX() + parent.getWidth() + 10, parent.getY());
+                } else {
+                    exportFrame.addText(result.toString());
+                }
+                exportFrame.setVisible(true);
+            } else {
+                File savingFile = new File(this.toString() + ".pstricks");                  /// WHAT TO PUT HERE?
+                fileChooser.setSelectedFile(savingFile);
+                int returnVal = fileChooser.showSaveDialog(parent);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    savingFile = fileChooser.getSelectedFile();
+                    if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                        try {
+                            FileWriter fileWriter = new FileWriter(savingFile);
+                            fileWriter.write(result.toString());
+                            fileWriter.close();
+                        } catch (Exception excp) {
+                        }
+                    }
+                }
+            }
+        }
+
+        private String PSTricksPreamble() {
+            int unit = width / ((p.length() + 1) * DX);
+            return "\\psset{" + "xunit=" + unit + "pt, " + "yunit=" + unit + "pt, " + "runit=" + unit + "pt" + "}\n" + "\\begin{pspicture}(0,0)" + "(" + ((p.length() + 1) * DX) + "," + ((p.length() + 1) * DY) + ")\n";
+        }
+
+        private String PSTricksDarkGrayRectangle(int i, int j) {
+            return "\\pspolygon*[linecolor=darkgray]" + PSTricksRectangle(i, j);
+        }
+
+        private String PSTricksLightGrayRectangle(int i, int j) {
+            return "\\pspolygon*[linecolor=lightgray]" + PSTricksRectangle(i, j);
+        }
+
+        private String PSTricksRectangle(int i, int j) {
+            int x = i * DX;
+            int y = j * DY;
+            return "(" + x + "," + y + ")" + "(" + (x + DX) + "," + y + ")" + "(" + (x + DX) + "," + (y + DY) + ")" + "(" + x + "," + (y + DY) + ")" + "\n";
+        }
+
+        private String PSTricksCircle(int i, boolean allGood) {
+            int x = (i + 1) * DX;
+            int y = (p.elements[i] + 1) * DY;
+            String color = allGood ? "black" : "red";
+            return "\\pscircle*[linecolor=" + color + "]" + "(" + x + "," + y + ")" + "{" + (DX / 5.0) + "}" + "\n";
+        }
+
+        private String PSTricksLines(int i) {
+            return "\\psline" + "(" + (i * DX) + "," + 0 + ")" + "(" + (i * DX) + "," + (p.length() + 1) * DY + ")" + "\n" + "\\psline" + "(" + (0) + "," + (i * DY) + ")" + "(" + ((p.length() + 1) * DX) + "," + (i * DY) + ")" + "\n";
+        }
+    },
+    SVG {
+        private PrintStream out;
+        private int width;
+        private int height;
+        private int DX;
+        private int DY;
+        private Permutation p;
+
+        @Override
+        public void export(StaticPermFrame parent, RestrictedPermutation restPerm) {
+
+            File savingFile = new File(this.toString() + ".svg");
+            fileChooser.setSelectedFile(savingFile);
+            int returnVal = fileChooser.showSaveDialog(parent);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                savingFile = fileChooser.getSelectedFile();
+                if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                    try {
+                        this.out = new PrintStream(savingFile);
+                    } catch (Exception excp) {
+                    }
+                }
+            }
+
+            this.p = restPerm.getPerm();
+            JPanel panel = parent.getDisplayPanel();
+            this.width = panel.getWidth();
+            this.height = panel.getHeight();
+            this.DX = width / (p.length() + 1);
+            this.DY = height / (p.length() + 1);
+
+            addPreamble();
+
+            int r = Math.min(Math.min(DX, DY) / 4, StaticPermFrame.DEFAULT_POINT_SIZE);
+            for (int i = 0; i <= p.length(); i++) {
+                for (int j = 0; j <= p.length(); j++) {
+                    if (restPerm.propertiesForbid(i, j)) {
+                        addGreyRect(i, j);
+                    } else if (restPerm.userForbids(i, j)) {
+                        addLightGreyRect(i, j);
+                    } else {
+                        addWhiteRect(i, j);
+                    }
+                    if (parent.hasMonotoneConstraints()) {
+                        int constraint = restPerm.montoneRequirements(i, j);
+                        switch (constraint) {
+                            case RestrictedPermutation.SINGLETON:
+                                addCircle(i, j, r);
+                                break;
+                            case RestrictedPermutation.INCREASING:
+                                addIncreasing(i, j);
+                                break;
+                            case RestrictedPermutation.DECREASING:
+                                addDecreasing(i, j);
+                                break;
+                            default:
+                            // Do nothing
+                            }
+                    }
+                }
+            }
+            boolean allGood = restPerm.hasProperties() && (!restPerm.simple || PermUtilities.isSimple(p));
+            for (int i = 0; i < p.length(); i++) {
+                if (allGood) {
+                    addBlackCircle(i);
+                } else {
+                    addRedCircle(i);
+                }
+            }
+            addPostamble();
+        }
+
+        private void addPreamble() {
+            out.println("<svg width=\""
+                    + width
+                    + "\" height=\""
+                    + height
+                    + "\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\">");
+            out.println();
+        }
+
+        private void addGreyRect(int x, int y) {
+            out.println(
+                    "<rect "
+                    + "x=\"" + (x * DX) + "\" "
+                    + "y=\"" + ((p.length() - y) * DY) + "\" "
+                    + "width=\"" + DX + "\" "
+                    + "height=\"" + DY + "\" "
+                    + "fill=\"grey\" "
+                    + "stroke=\"black\" " + "/>");
+        }
+
+        private void addLightGreyRect(int x, int y) {
+            out.println(
+                    "<rect "
+                    + "x=\"" + (x * DX) + "\" "
+                    + "y=\"" + ((p.length() - y) * DY) + "\" "
+                    + "width=\"" + DX + "\" "
+                    + "height=\"" + DY + "\" "
+                    + "fill=\"lightgrey\" "
+                    + "stroke=\"black\" " + "/>");
+        }
+
+        private void addWhiteRect(int x, int y) {
+            out.println(
+                    "<rect "
+                    + "x=\"" + (x * DX) + "\" "
+                    + "y=\"" + ((p.length() - y) * DY) + "\" "
+                    + "width=\"" + DX + "\" "
+                    + "height=\"" + DY + "\" "
+                    + "fill=\"white\" "
+                    + "stroke=\"black\" " + "/>");
+        }
+
+        private void addBlackCircle(int i) {
+            int x = (i + 1) * DX;
+            int y = (p.length() - p.elements[i]) * DY;
+            out.println(
+                    "<circle "
+                    + "cx=\"" + x + "\" "
+                    + "cy=\"" + y + "\" "
+                    + "r=\"" + (DX / 5.0) + "\" "
+                    + "fill=\"black\" />");
+        }
+
+        private void addRedCircle(int i) {
+            int x = (p.length() - i) * DX;
+            int y = (p.elements[i] + 1) * DY;
+            out.println(
+                    "<circle "
+                    + "cx=\"" + x + "\" "
+                    + "cy=\"" + y + "\" "
+                    + "r=\"" + (DX / 5.0) + "\" "
+                    + "fill=\"red\" />");
+        }
+
+        private void addCircle(int i, int j, int r) {
+            out.println(
+                    "<circle "
+                    + "cx=\"" + ((i * DX) + (DX / 2) - (r / 2)) + "\" "
+                    + "cy=\"" + (height - (j) * DY - DY / 2 - r / 2) + "\" "
+                    + "r=\"" + r + "\" "
+                    + "fill=\"none\" />");
+        }
+
+        private void addIncreasing(int i, int j) {
+            out.println(
+                    "<line "
+                    + "x1=\"" + (i * DX + DX / 4) + "\" "
+                    + "y1=\"" + (height - (j) * DY - DY / 4) + "\" "
+                    + "x2=\"" + (i * DX + 3 * DX / 4) + "\" "
+                    + "y2=\"" + (height - (j) * DY - 3 * DY / 4) + "\" "
+                    + "stroke=\"black\" " + "/>");
+        }
+
+        private void addDecreasing(int i, int j) {
+            out.println(
+                    "<line "
+                    + "x1=\"" + (i * DX + DX / 4) + "\" "
+                    + "y1=\"" + (height - (j) * DY - 3 * DY / 4) + "\" "
+                    + "x2=\"" + (i * DX + 3 * DX / 4) + "\" "
+                    + "y2=\"" + (height - (j) * DY - DY / 4) + "\" "
+                    + "stroke=\"black\" " + "/>");
+        }
+
+        private void addPostamble() {
+            out.println("</svg>");
+        }
+    },
+    GIF {
+        private StaticPermFrame parent;
+
+        @Override
+        public void export(StaticPermFrame parent, RestrictedPermutation restPerm) {
+            this.parent = parent;
+            JPanel panel = parent.getDisplayPanel();
+            int width = panel.getWidth();
+            int height = panel.getHeight();
+
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            panel.paint(g);
+
+            File savingFile = new File(this.toString() + ".gif");
+            fileChooser.setSelectedFile(savingFile);
+            int returnVal = fileChooser.showSaveDialog(parent);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                savingFile = fileChooser.getSelectedFile();
+                if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                    try {
+                        ImageIO.write(image, "gif", savingFile);
+                    } catch (Exception excp) {
+                    }
+                }
+            }
+        }
+    },
+    TikZ {
+        private TextFrame exportFrame;
+        private javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+
+        @Override
+        public void export(StaticPermFrame parent, RestrictedPermutation restPerm) {
+            StringBuilder result = new StringBuilder("Not supported yet.");
+
+            if (!ExportDialog.saveAsFile) {
+                if (exportFrame == null) {
+                    exportFrame = new TextFrame(result.toString());
+                    exportFrame.setLocation(parent.getX() + parent.getWidth() + 10, parent.getY());
+                } else {
+                    exportFrame.addText(result.toString());
+                }
+                exportFrame.setVisible(true);
+            } else {
+                File savingFile = new File(this.toString() + ".tikz");                  /// WHAT TO PUT HERE!!?
+                fileChooser.setSelectedFile(savingFile);
+                int returnVal = fileChooser.showSaveDialog(parent);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    savingFile = fileChooser.getSelectedFile();
+                    if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                        try {
+                            FileWriter fileWriter = new FileWriter(savingFile);
+                            fileWriter.write(result.toString());
+                            fileWriter.close();
+
+
+
+
+
+
+
+
+
+                        } catch (Exception excp) {
+                        }
+                    }
+                }
+            }
+        }
+    },
+    PS {
+        private StaticPermFrame parent;
+
+        public void export(StaticPermFrame parent, RestrictedPermutation restper) {
+            this.parent = parent;
+            JPanel displayPanel = parent.getDisplayPanel();
+            File savingFile = new File(this.toString() + ".ps");
+            fileChooser.setSelectedFile(savingFile);
+            int returnVal = fileChooser.showSaveDialog(parent);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                savingFile = fileChooser.getSelectedFile();
+                if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                    BufferedImage image = new BufferedImage(displayPanel.getWidth(), displayPanel.getHeight(), BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g = image.createGraphics();
+                    displayPanel.paint(g);
+
+                    File tempFile = new File(this.toString() + ".gif");
+                    try {
+                        ImageIO.write(image, "gif", tempFile);
+                    } catch (Exception excp) {
+                    }
+                    String infile = this.toString() + ".gif";
+                    DocFlavor flavor = DocFlavor.INPUT_STREAM.GIF;
+                    String mimeType = DocFlavor.INPUT_STREAM.POSTSCRIPT.getMimeType();
+                    StreamPrintServiceFactory[] factories = StreamPrintServiceFactory
+                            .lookupStreamPrintServiceFactories(flavor, mimeType);
+                    try {
+                        PrintStream fos = new PrintStream(savingFile);
+                        StreamPrintService sps = factories[0].getPrintService(fos);
+                        FileInputStream fis = new FileInputStream(infile);
+                        DocPrintJob dpj = sps.createPrintJob();
+                        PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+                        Doc doc = new SimpleDoc(fis, flavor, null);
+                        dpj.print(doc, pras);
+                        fos.close();
+                    } catch (FileNotFoundException e1) {
+                        e1.printStackTrace();
+                    } catch (PrintException e2) {
+                        e2.printStackTrace();
+                    }
+                    tempFile.delete();
+                }
+            }
+        }
+    },
+    PNG {
+        private StaticPermFrame parent;
+
+        public void export(StaticPermFrame parent, RestrictedPermutation restPerm) {
+            this.parent = parent;
+            JPanel panel = parent.getDisplayPanel();
+
+            BufferedImage image = new BufferedImage(panel.getWidth(), panel.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = image.createGraphics();
+            panel.paint(g);
+
+            File savingFile = new File(this.toString() + ".png");
+            fileChooser.setSelectedFile(savingFile);
+            int returnVal = fileChooser.showSaveDialog(parent);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                savingFile = fileChooser.getSelectedFile();
+                if (FileUtilities.canSaveFileHere(parent, savingFile)) {
+                    try {
+                        ImageIO.write(image, "png", savingFile);
+                    } catch (Exception excp) {
+                    }
+                }
+            }
+        }
+    }
+}

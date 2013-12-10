@@ -1,0 +1,57 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import permlab.PermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class OnePointDeletions {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        Permutation p2413 = new Permutation("2413");
+        Permutation p3142 = new Permutation("3142");
+        Permutation p1 = new Permutation("1");
+        HashSet<Permutation> noGood = new HashSet<Permutation>();
+        
+        noGood.add(PermUtilities.sum(p1, p2413));
+        noGood.add(PermUtilities.sum(p1, p3142));
+        noGood.add(PermUtilities.sum(p2413, p1));
+        noGood.add(PermUtilities.sum(p3142, p1));
+        noGood.add(PermUtilities.skewSum(p1, p2413));
+        noGood.add(PermUtilities.skewSum(p1, p3142));
+        noGood.add(PermUtilities.skewSum(p2413, p1));
+        noGood.add(PermUtilities.skewSum(p3142, p1));
+        
+        HashMap<Permutation, HashSet<Permutation>> dels = new HashMap<Permutation, HashSet<Permutation>>();
+        for(Permutation p : new Permutations(6)) {
+            HashSet<Permutation> delP = new HashSet<Permutation>();
+            for(int i = 0; i < 6; i++) {
+                delP.add(PermUtilities.delete(p,i));
+            }
+            delP.removeAll(noGood);
+            dels.put(p, delP);
+        }
+        for(Permutation p : new Permutations(6)) {
+            for(Permutation q : new Permutations(6)) {
+                if (!p.equals(q) && dels.get(p).equals(dels.get(q))) System.out.println(p + " " + q);
+            }
+        }
+        System.out.println("Done");
+    }
+    
+}

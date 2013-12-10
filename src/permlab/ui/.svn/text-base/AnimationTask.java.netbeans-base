@@ -1,0 +1,53 @@
+package permlab.ui;
+
+import java.util.Collection;
+import java.util.List;
+import javax.swing.SwingWorker;
+import permlab.Permutation;
+import permlab.int_classes.InterruptiblePermClassInterface;
+import permlab.property.PermProperty;
+import permlab.property.Universal;
+
+/**
+ * A thread associated with the AnimationPermFrame to process permutations in a
+ * collection and pass them to the frame to be displayed.
+ * 
+ * @author M Belton
+ */
+public class AnimationTask extends SwingWorker<Void, Collection<Permutation>> {
+
+    ClassEnumerationFrame parent;
+    int[] lengths;
+    InterruptiblePermClassInterface theClass;
+    PermProperty additionalProperty;
+    AnimatedPermFrame frame = new AnimatedPermFrame(this);
+
+    public AnimationTask(InterruptiblePermClassInterface theClass, int[] lengths) {
+        this(theClass, lengths, new Universal());
+    }
+
+    public AnimationTask(InterruptiblePermClassInterface theClass, int[] lengths, PermProperty additionalProperty) {
+        this.theClass = theClass.getInterruptibleClass(this);
+        this.lengths = lengths;
+        this.additionalProperty = additionalProperty;
+        frame.setVisible(true);
+    }
+
+    @Override
+    protected Void doInBackground() throws Exception {
+        for (int n : lengths) {
+            publish(theClass.getPerms(n)); // Sends list of permutations to process when retrieved
+            if (this.isCancelled()) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    protected void process(List<Collection<Permutation>> permCollections) {
+        for (Collection<Permutation> permCollection : permCollections) {
+            frame.addPerms(permCollection, additionalProperty); // adds permutation to frame
+        }
+    }
+}

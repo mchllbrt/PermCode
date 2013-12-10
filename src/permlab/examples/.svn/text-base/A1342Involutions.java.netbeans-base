@@ -1,0 +1,44 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.SimplePermClass;
+import permlab.processor.PermCollector;
+import permlab.processor.PermCounter;
+import permlab.property.PermProperty;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class A1342Involutions {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        PermProperty inv = new PermProperty() {
+            public boolean isSatisfiedBy(Permutation p) {
+                return PermUtilities.isInvolution(p);
+            }
+
+            @Override
+            public boolean isSatisfiedBy(int[] values) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+        };
+        PermCollector collector = new PermCollector(inv);
+        PermCounter counter = new PermCounter(inv);
+        SimplePermClass s = new SimplePermClass(new Permutation("123"));
+        for(int n = 4; n <= 20; n++) {
+            s.processPerms(n, counter);
+            System.out.println(counter.getCount());
+            counter.reset();
+            // System.out.println();
+        }
+    }
+}

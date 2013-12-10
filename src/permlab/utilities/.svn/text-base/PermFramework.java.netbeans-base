@@ -1,0 +1,146 @@
+package permlab.utilities;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.property.PermProperty;
+
+/**
+ * A PermFramework represents a framework of unit cells, with some points 
+ * defined at the intersections of some of the corresponding grid lines defining
+ * a permutation. There may be lines without points on them (to allow for
+ * splitting cells etc.)
+ * 
+ * @author Michael Albert
+ */
+public class PermFramework {
+    
+    int rows;
+    int cols;
+    boolean[][] forbiddenCell;
+    ArrayList<IntPair> points = new ArrayList<IntPair>();
+
+    public PermFramework(int rows, int cols) {
+        this.rows = rows;
+        this.cols = cols;
+        this.forbiddenCell = new boolean[rows][cols];
+    }
+
+    private PermFramework(boolean[][] forbiddenCell, ArrayList<IntPair> points) {
+        this.forbiddenCell = forbiddenCell;
+        this.points = points;
+        this.rows = forbiddenCell.length;
+        this.cols = forbiddenCell[0].length;
+    }
+    
+    public Permutation getPermutation() {
+        return PermUtilities.permFromPoints(points);
+    }
+    
+    public void forbidCell(int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= cols)
+            throw new IndexOutOfBoundsException("Attempt to forbid cell (" +
+                    r + ", " + c + ") in framework of dimensions (" +
+                    rows + " , " + cols + ").");
+        
+        forbiddenCell[r][c] = true;
+        
+    }
+    
+    public void forbidCell(IntPair cell) {
+        forbidCell(cell.getFirst(), cell.getSecond());
+    }
+    
+    public void addPoint(IntPair point) {
+        int r = point.getFirst();
+        int c = point.getSecond();
+        if (r < 0 || r > rows || c < 0 || c > cols)
+            throw new IndexOutOfBoundsException("Attempt to add point (" +
+                    r + ", " + c + ") in framework of dimensions (" +
+                    rows + " , " + cols + ").");
+        points.add(point);
+    }
+    
+    public void addForbiddenCells(PermProperty prop) {
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                forbiddenCell[r][c] |= isForbiddenCell(r, c, prop);
+            }
+        }
+    }
+    
+    private boolean isForbiddenCell(int r, int c, PermProperty prop) {
+        int[] elements = new int[points.size()+1];
+        IntPair[] pointsArray = (IntPair[]) points.toArray();
+        Arrays.sort(pointsArray);
+        int index = 0;
+        int i = 0;
+        while(i < pointsArray.length && pointsArray[i].getFirst() < c) {
+            int v =  pointsArray[i++].getSecond();
+            elements[index++] = (v <= r) ? v : v+1;
+        }
+        elements[index++] = r;
+        while(i < pointsArray.length) {
+             int v =  pointsArray[i++].getSecond();
+             elements[index++] = (v <= r) ? v : v+1;
+        }
+        return !prop.isSatisfiedBy(new Permutation(elements));
+    }
+    
+    public PermFramework splitColumn(int col) {
+        if (col < 0 || col >= cols) 
+            throw new IndexOutOfBoundsException("Attempt to split column" +
+                     + col + " in framework with " +
+                     cols + "columns.");
+        
+        boolean[][] resultForbiddenCell = new boolean[rows][cols+1];
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c <= col; c++) {
+                resultForbiddenCell[r][c] = forbiddenCell[r][c];
+            }
+            for(int c = col+1; c <= cols; c++) {
+                resultForbiddenCell[r][c] = forbiddenCell[r][c-1];
+            }
+        }
+        
+        ArrayList<IntPair> resultPoints = new ArrayList<IntPair>();
+        for(IntPair point: points) {
+            int r = point.getFirst();
+            int c = point.getSecond();
+            resultPoints.add(new IntPair(
+                    r,
+                    (c > col) ? c+1 : c)
+                    );
+        }
+        return new PermFramework(resultForbiddenCell, resultPoints);
+    }
+    
+    public PermFramework splitRow(int row) {
+        if (row < 0 || row >= rows) 
+            throw new IndexOutOfBoundsException("Attempt to split row" +
+                     + row + " in framework with " +
+                     rows + "rows.");
+        
+        boolean[][] resultForbiddenCell = new boolean[rows+1][cols];
+        for(int c = 0; c < cols; c++) {
+            for(int r = 0; r <= row; r++) {
+                resultForbiddenCell[r][c] = forbiddenCell[r][c];
+            }
+            for(int r = row+1; r <= rows; r++) {
+                resultForbiddenCell[r][c] = forbiddenCell[r-1][c];
+            }
+        }
+        ArrayList<IntPair> resultPoints = new ArrayList<IntPair>();
+        for(IntPair point: points) {
+            int r = point.getFirst();
+            int c = point.getSecond();
+            resultPoints.add(new IntPair(
+                    (r > row) ? r+1 : r,
+                    c)
+                    );
+        }
+        return new PermFramework(resultForbiddenCell, resultPoints);
+    }
+    
+}

@@ -1,0 +1,68 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.property.HereditaryProperty;
+import permlab.property.HereditaryPropertyAdapter;
+import permlab.property.Intersection;
+import permlab.property.PermProperty;
+import permlab.property.Union;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class Vince_13_02_06 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+//        PermProperty e = PermProperty.EMPTY;
+//        PermProperty i = PermProperty.INCREASING;
+//        PermProperty d = PermProperty.DECREASING;
+//        
+//        Griddable g = new Griddable(
+//                new PermProperty[][] {
+//                    { i,e, e, d},
+//                    { e, i, d, e},
+//                    { e, e, e, i},
+//                    { e, e, i, e}
+//                });
+//        
+//        HereditaryProperty h = HereditaryPropertyAdapter.forceHereditary(g);
+//        for(Permutation p : h.getBasisTo(8)) System.out.println(p);
+//0  0  1  0
+//0  0  0  1
+//0  1 -1  0
+//1  0  0 -1
+
+        PermProperty a1 = new Intersection(
+                PermUtilities.avoidanceTest("3124"),
+                PermUtilities.avoidanceTest("4132"),
+                PermUtilities.avoidanceTest("4312"),
+                PermUtilities.avoidanceTest("21354"),
+                PermUtilities.avoidanceTest("21435"),
+                PermUtilities.avoidanceTest("21543"),
+                PermUtilities.avoidanceTest("31542"));
+        
+       //  4312, 4231, 4123, 3124, 32541, 21534, 21435)?
+        PermProperty a2 = new Intersection(
+                PermUtilities.avoidanceTest("4312"),
+                PermUtilities.avoidanceTest("4231"),
+                PermUtilities.avoidanceTest("4123"),
+                PermUtilities.avoidanceTest("3124"),
+                PermUtilities.avoidanceTest("32541"),
+                PermUtilities.avoidanceTest("21534"),
+                PermUtilities.avoidanceTest("21435"));
+        
+        HereditaryProperty h = HereditaryPropertyAdapter.forceHereditary(new Union(a1, a2));
+        
+        for(Permutation p : h.getBasisTo(10)) System.out.println(p);
+    }
+}

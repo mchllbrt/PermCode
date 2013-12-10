@@ -1,0 +1,122 @@
+package permlab.examples;
+
+import java.util.HashSet;
+import permlab.PermClass;
+import permlab.Permutation;
+
+/**
+ * Look at the words generated from 1324 avoiders under the red blue colouring
+ * and min/max splitting
+ * 
+ * @author MichaelAlbert
+ */
+public class BonaLettering {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+        int n = 8;
+        int factorLength = 4;
+        HashSet<String> factors = new HashSet<String>();
+        PermClass c = new PermClass("1324");
+        for (Permutation p : c.getPerms(n)) {
+            int minBlue = Integer.MAX_VALUE;
+            int blueCount = 0;
+            int redCount = 0;
+            int[] red = new int[p.length()];
+            int[] blue = new int[p.length()];
+            for (int i : p.elements) {
+                if (i > minBlue) {
+                    blue[blueCount++] = i;
+                } else if (makes132(red, redCount, i)) {
+                    blue[blueCount++] = i;
+                    minBlue = (i < minBlue) ? i : minBlue;
+                } else {
+                    red[redCount++] = i;
+                }
+            }
+            int redIndex = 0;
+            int blueIndex = 0;
+            StringBuilder w = new StringBuilder();
+            for (int i = 0; i < p.length(); i++) {
+                if (p.elements[i] == red[redIndex]) {
+                    redIndex++;
+                    if (LRMin(p, i)) {
+                        w.append('A');
+                    } else {
+                        w.append('B');
+                    }
+                } else {
+                    blueIndex++;
+                    if (!RLMax(p, i)) {
+                        w.append('C');
+                    } else {
+                        w.append('D');
+                    }
+                }
+                if (w.length() > factorLength) {
+                    w.deleteCharAt(0);
+                }
+                if (w.length() == factorLength) {
+                    factors.add(w.toString());
+                }
+            }
+        }
+        System.out.println(factors.size());
+        for (String f : allWords(new char[]{'A', 'B', 'C', 'D'}, factorLength)) {
+            if (!factors.contains(f)) {
+                System.out.println(f);
+            }
+        }
+    }
+
+    private static boolean makes132(int[] red, int redCount, int i) {
+        int lowIndex = 0;
+        while (lowIndex < redCount && red[lowIndex] > i) {
+            lowIndex++;
+        }
+        if (lowIndex == redCount) {
+            return false;
+        }
+        for (int j = lowIndex + 1; j < redCount; j++) {
+            if (red[j] > i) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean LRMin(Permutation p, int i) {
+        for (int j = 0; j < i; j++) {
+            if (p.elements[j] < p.elements[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean RLMax(Permutation p, int i) {
+        for (int j = p.length() - 1; j > i; j--) {
+            if (p.elements[j] > p.elements[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    static HashSet<String> allWords(char[] cs, int length) {
+        HashSet<String> result = new HashSet<String>();
+        if (length == 0) {
+            result.add("");
+            return result;
+        }
+        for (String s : allWords(cs, length - 1)) {
+            for (char c : cs) {
+                result.add(s + c);
+            }
+        }
+        return result;
+    }
+}

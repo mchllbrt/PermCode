@@ -1,0 +1,97 @@
+package permlab.examples;
+
+import java.util.ArrayList;
+import permlab.utilities.Composition;
+import permlab.PermUtilities;
+import permlab.Permutation;
+
+/**
+ * Investigate the y -> x(y+1)/(1-xy) substitution that seems to generate
+ * the simples and specific one point extensions in Av(321) because, WTF is
+ * going on?
+ * 
+ * @author Michael Albert
+ */
+public class SimpleAv321Generation {
+
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
+
+    class Thing {
+
+        ArrayList<Integer> all;
+        int lastBlockMin;
+        int lastBlockLeft;
+
+        public Thing() {
+            all = new ArrayList<Integer>();
+            all.add(0);
+            lastBlockMin = 0;
+            lastBlockLeft = 0;
+        }
+
+        public int size() {
+            return all.size();
+        }
+
+        public Thing copy() {
+            Thing result = new Thing();
+            result.all = (ArrayList<Integer>) this.all.clone();
+            result.lastBlockMin = this.lastBlockMin;
+            result.lastBlockLeft = this.lastBlockLeft;
+            return result;
+        }
+
+        public Thing extendToRightWithValue(int v) {
+            Thing result = this.copy();
+            for (int i = 0; i < result.all.size(); i++) {
+                int w = result.all.get(i);
+                result.all.set(i, (w >= v) ? w + 1 : w);
+            }
+            result.all.add(v);
+            return result;
+        }
+
+        public Thing extendAboveAtIndex(int index) {
+            Thing result = this.copy();
+            result.all.add(index, result.size());
+            return result;
+        }
+        
+        public Thing explodeIndex(int index) {
+            Thing result = this.copy();
+            int v = result.all.get(index);
+            for (int i = 0; i < result.all.size(); i++) {
+                int w = result.all.get(i);
+                result.all.set(i, (w >= v) ? w + 1 : w);
+            }
+            result.all.add(index, v);
+            return result;
+        }
+        
+        public ArrayList<Thing> properTopExtensions(int sizeBound) {
+            ArrayList<Thing> result = new ArrayList<Thing>();
+            int blockLength = size() - lastBlockLeft;
+            for(int i = 1; i <= sizeBound - size(); i++) {
+                Composition c = new Composition(i, blockLength);
+                do{
+                    result.add(this.extendAbove(c.getParts()));
+                } while (c.next().length > 0);
+            }
+            return result;
+        }
+
+        public Permutation asPermutation() {
+            int[] p = new int[this.size()];
+            for (int i = 0; i < p.length; i++) {
+                p[i] = all.get(i);
+            }
+            return new Permutation(p, PermUtilities.SAFE);
+        }
+
+        private Thing extendAbove(int[] parts) {
+            throw new UnsupportedOperationException("Not yet implemented");
+        }
+    }
+}

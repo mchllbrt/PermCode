@@ -1,0 +1,105 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import permlab.InvolutionPermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.processor.PermCounter;
+import permlab.processor.PermProcessor;
+import permlab.processor.RestrictedPermProcessor;
+import permlab.property.PermProperty;
+import permlab.utilities.InvolutionUtilities;
+
+/**
+ *
+ * @author Michael Albert
+ */
+public class A321Involutions {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        
+        InvolutionPermClass a321 = new InvolutionPermClass(new Permutation("321"));
+        
+        PermProcessor dataCollector = new PermProcessor() {
+
+            int[] fixedPointCounts = new int[3];
+            int[] leftRightMinCounts = new int[PermUtilities.MAX_PERM_SIZE];
+            int[] leftRightMaxCounts = new int[PermUtilities.MAX_PERM_SIZE];
+            int maxLRMax = 0;
+
+            @Override
+            public void process(Permutation p) {
+                if (PermUtilities.isSimple(p)) {
+                    fixedPointCounts[InvolutionUtilities.countFixedPoints(p)]++;
+                    leftRightMinCounts[countLRMins(p)]++;
+                }
+            }
+
+            @Override
+            public void reset() {
+                fixedPointCounts = new int[3];
+                leftRightMinCounts = new int[PermUtilities.MAX_PERM_SIZE];
+                maxLRMax = 0;
+            }
+
+            private int countLRMins(Permutation p) {
+                int currentMin = Integer.MAX_VALUE;
+                int result = 0;
+                for (int i = 0; i < p.length(); i++) {
+                    if (p.elements[i] < currentMin) {
+                        currentMin = p.elements[i];
+                        result++;
+                    }
+                }
+                maxLRMax = (result > maxLRMax) ? result : maxLRMax;
+                return result;
+            }
+            
+            private int countLRMaxs(Permutation p) {
+                int currentMax = Integer.MIN_VALUE;
+                int result = 0;
+                for (int i = 0; i < p.length(); i++) {
+                    if (p.elements[i] > currentMax) {
+                        currentMax = p.elements[i];
+                        result++;
+                    }
+                }
+                maxLRMax = (result > maxLRMax) ? result : maxLRMax;
+                return result;
+            }
+
+            @Override
+            public String report() {
+                StringBuilder result = new StringBuilder();
+                // result.append("Fixed points: ");
+                for (int f : fixedPointCounts) {
+                    result.append(f);
+                    result.append(" ");
+                }
+                result.append("\n");
+                // result.append("LRMins:");
+                for (int i = 0; i <= maxLRMax; i++) {
+                    // result.append(" ");
+                    result.append(leftRightMinCounts[i]);
+                    result.append(" ");
+                }
+                return result.toString();
+            }
+        };
+
+        final PermCounter c = new PermCounter();
+        PermProcessor r = new RestrictedPermProcessor(c, PermProperty.SIMPLE);
+        
+        for (int n = 2; n <= 20; n+=2) {
+            a321.processPerms(n, r);
+            System.out.print(c.getCount() + " ");
+            c.reset();
+        }
+    }
+}

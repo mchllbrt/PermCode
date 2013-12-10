@@ -1,0 +1,194 @@
+package permlab.examples;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+import permlab.SimplePermClass;
+import permlab.property.Involves;
+
+/**
+ * Test whether, given a permutation b, all the permutations involved in all the
+ * simple extensions of b are also involved in b.
+ *
+ * @author Michael Albert
+ */
+public class ConverseSaturated {
+
+    public static void main(String[] args) {
+        for (Permutation p : new Permutations(8)) {
+            if (PermUtilities.isSymmetryRep(p)) converseSaturated2(p);
+        }
+    }
+
+    private static HashSet<Permutation> downSet(Permutation p) {
+        LinkedList<Permutation> toProcess = new LinkedList<Permutation>();
+        HashSet<Permutation> result = new HashSet<Permutation>();
+        toProcess.add(p);
+        while (!toProcess.isEmpty()) {
+            Permutation q = toProcess.remove();
+            if (!result.contains(q)) {
+                result.add(q);
+                for (int i = 0; i < q.length(); i++) {
+                    toProcess.add(PermUtilities.delete(q, i));
+                }
+            }
+        }
+        return result;
+    }
+
+    public static void converseSaturated(int n) {
+        for (Permutation b : new Permutations(n)) {
+            System.out.println("b = " + b);
+            Involves ib = new Involves(b);
+            if (PermUtilities.isSimple(b)) {
+                System.out.println("Is simple");
+                System.out.println("---------------------");
+                continue;
+            }
+            HashSet<Permutation> basis = new HashSet<Permutation>();
+            Permutation firstSimpleExtension = null;
+            SimplePermClass allSimples = new SimplePermClass(basis);
+            for (int m = n + 1; m <= 2 * n; m++) {
+                for (Permutation s : allSimples.getPerms(m)) {
+                    if (ib.isSatisfiedBy(s)) {
+                        firstSimpleExtension = s;
+                        break;
+                    }
+                }
+                if (firstSimpleExtension != null) {
+                    break;
+                }
+            }
+            System.out.println("First simple extension: " + firstSimpleExtension);
+            HashSet<Permutation> badPerms = new HashSet<Permutation>();
+            for (Permutation p : downSet(firstSimpleExtension)) {
+                if (isNormal(p) && !(new Involves(p)).isSatisfiedBy(b)) {
+                    badPerms.add(p);
+                }
+            }
+//            System.out.print("Bad: ");
+//            for (Permutation p : badPerms) {
+//                System.out.print(p + " ");
+//            }
+//            System.out.println();
+//            basis.add(firstSimpleExtension);
+            for (int m = firstSimpleExtension.length(); m <= 20; m++) {
+                System.out.println("m = " + m);
+                System.out.println("Bad perms:");
+                for (Permutation p : badPerms) {
+                    System.out.println(p);
+                }
+                System.out.println();
+                SimplePermClass simpleCandidates = new SimplePermClass(basis);
+                for (Permutation s : simpleCandidates.getPerms(m)) {
+                    if (ib.isSatisfiedBy(s)) {
+                        // System.out.print("Testing " + s + ", ");
+                        int count = 0;
+                        HashSet<Permutation> shadowOfS = downSet(s);
+                        HashSet<Permutation> newBadPerms = new HashSet<Permutation>();
+                        for (Permutation p : badPerms) {
+                            if (shadowOfS.contains(p)) {
+                                newBadPerms.add(p);
+                            } else {
+                                count++;
+                            }
+                        }
+                        badPerms = newBadPerms;
+                        // basis.add(s);
+                        // System.out.println(" eliminates " + count + ", with " + badPerms.size() + " remaining.");
+                        if (badPerms.isEmpty()) {
+                            break;
+                        }
+                    }
+                }
+                if (badPerms.isEmpty()) {
+                    System.out.println(m + " was length needed");
+                    break;
+                }
+            }
+            System.out.println("---------------------");
+        }
+
+    }
+
+    public static void converseSaturated2(Permutation b) {
+        System.out.println("b = " + b);
+        Involves ib = new Involves(b);
+        if (PermUtilities.isSimple(b)) {
+            System.out.println("Is simple");
+            System.out.println("---------------------");
+            return;
+        }
+        HashSet<Permutation> basis = new HashSet<Permutation>();
+        Permutation firstSimpleExtension = null;
+        SimplePermClass allSimples = new SimplePermClass(basis);
+        for (int m = b.length() + 1; m <= 2 * b.length(); m++) {
+            for (Permutation s : allSimples.getPerms(m)) {
+                if (ib.isSatisfiedBy(s)) {
+                    firstSimpleExtension = s;
+                    break;
+                }
+            }
+            if (firstSimpleExtension != null) {
+                break;
+            }
+        }
+        System.out.println("First simple extension: " + firstSimpleExtension);
+        HashSet<Permutation> badPerms = new HashSet<Permutation>();
+        for (Permutation p : downSet(firstSimpleExtension)) {
+            if (isNormal(p) && !(new Involves(p)).isSatisfiedBy(b)) {
+                badPerms.add(p);
+            }
+        }
+        SimplePermClass simpleCandidates = new SimplePermClass(basis);
+        for (Permutation s : simpleCandidates.getPerms(firstSimpleExtension.length())) {
+            if (ib.isSatisfiedBy(s)) {
+                HashSet<Permutation> shadowOfS = downSet(s);
+                HashSet<Permutation> newBadPerms = new HashSet<Permutation>();
+                for (Permutation p : badPerms) {
+                    if (shadowOfS.contains(p)) {
+                        newBadPerms.add(p);
+                    }
+                }
+                badPerms = newBadPerms;
+                if (badPerms.isEmpty()) {
+                    break;
+                }
+            }
+        }
+        if (badPerms.isEmpty()) {
+            System.out.println("Minimum length sufficed");
+            return;
+        }
+        System.out.println("Remaining bad permutations:");
+        for (Permutation p : badPerms) {
+            System.out.print(p + " ");
+        }
+        System.out.println();
+        for (Permutation p : badPerms) {
+            boolean pDone = false;
+            simpleCandidates = new SimplePermClass(p);
+            for (int m = firstSimpleExtension.length() + 1; m <= 20; m++) {
+                for (Permutation s : simpleCandidates.getPerms(m)) {
+                    if (ib.isSatisfiedBy(s)) {
+                        System.out.println(p + " is avoided by " + s);
+                        pDone = true;
+                        break;
+                    }
+
+                }
+                if (pDone) {
+                    break;
+                }
+            }
+        }
+        System.out.println("-----------------------------");
+    }
+
+    private static boolean isNormal(Permutation p) {
+        return p.length() >= 4 || p.equals(new Permutation("123")) || p.equals(new Permutation("321"));
+    }
+}

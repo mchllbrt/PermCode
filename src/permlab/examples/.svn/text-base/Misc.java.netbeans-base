@@ -1,0 +1,62 @@
+package permlab.examples;
+
+import java.util.HashSet;
+import permlab.Permutation;
+import permlab.classes.PermutationClass;
+import permlab.Permutations;
+
+/**
+ * To use for miscellaneous, i.e. not of any long term importance, examples.
+ *
+ * @author Michael Albert
+ */
+public class Misc {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+        PermutationClass c = new PermutationClass("2143");
+        for (Permutation p : new Permutations(4)) {
+            if (!c.containsPermutation(p)) {
+                System.out.println(p);
+            }
+        }
+
+        PermutationClass vex = new PermutationClass("2143");
+        for (Permutation p : new Permutations(4)) {
+            if (!vex.containsPermutation(p)) {
+                System.out.println(p);
+            }
+        }
+        // HashSet<Permutation> basis = new HashSet<Permutation>();
+        // c = new PermutationClass(basis);
+        for (int n = 4; n <= 4; n++) {
+            for (Permutation p : new Permutations(n)) {
+                System.out.print(p);
+                if (vex.containsPermutation(p)) {
+                    System.out.println(" in vex");
+
+                } else {
+                    System.out.println(" not in vex");
+                }
+            }
+        }
+        System.out.println();
+         HashSet<Permutation> basis = new HashSet<Permutation>();
+         c = new PermutationClass(basis);
+        for (int n = 4; n <= 4; n++) {
+            for (Permutation p : new Permutations(c,n)) {
+                System.out.print(p);
+                if (vex.containsPermutation(p)) {
+                    System.out.println(" in vex");
+
+                } else {
+                    System.out.println(" not in vex");
+                }
+            }
+        }
+
+    }
+}

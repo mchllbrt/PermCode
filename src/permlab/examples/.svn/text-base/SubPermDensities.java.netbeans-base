@@ -1,0 +1,109 @@
+package permlab.examples;
+
+import java.util.HashMap;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+import permlab.property.PermProperty;
+
+/**
+ * Investigates the densities of subpermutation types in various permutation
+ * classes.
+ *
+ * @author Michael Albert
+ */
+public class SubPermDensities {
+
+    public static void main(String[] args) {
+
+//        Permutation p = new Permutation(6);
+//        HashMap<Permutation, Integer> counts = countOccurrences(p, 2);
+//        for(Permutation q : counts.keySet()) {
+//            System.out.println(q + " " + counts.get(q));
+//        }
+
+        Permutation p = new Permutation(1);
+        PermProperty a = PermUtilities.avoidanceTest("4231");
+        Permutation q = null;
+        for (int length = 2; length < 100; length++) {
+            int extensionCount = 0;
+            for (Permutation r : PermUtilities.rightExtensions(p)) {
+                if (a.isSatisfiedBy(r))  {
+                    extensionCount++;
+                    if (Math.random() * extensionCount < 1) {
+                        q = r;
+                    }
+                }
+            }
+            // System.out.println(q);
+            p = q;
+        }
+        HashMap<Permutation, Integer> counts = countOccurrences(p, 4);
+        for (Permutation s : counts.keySet()) {
+            System.out.println(s + " " + counts.get(s));
+        }
+
+
+    }
+
+    static class Combinations {
+
+        int n;
+        int k;
+        int[] c;
+
+        public Combinations(int n, int k) {
+            this.n = n;
+            this.k = k;
+            this.c = new int[k];
+            makeFirst();
+        }
+
+        public final void makeFirst() {
+            for (int i = 0; i < k; i++) {
+                c[i] = i;
+            }
+        }
+
+        public boolean hasNext() {
+            return c[0] != n - k;
+        }
+
+        public int[] getC() {
+            return c;
+        }
+
+        public int[] next() {
+            int i = k - 1;
+            while (i >= 0 && c[i] == n + i - k) {
+                i--;
+            }
+            if (i < 0) {
+                return c;
+            }
+            c[i]++;
+            for (int j = i + 1; j < k; j++) {
+                c[j] = c[j - 1] + 1;
+            }
+            return c;
+        }
+    }
+
+    static HashMap<Permutation, Integer> countOccurrences(Permutation p, int k) {
+        int n = p.length();
+        HashMap<Permutation, Integer> result = new HashMap<Permutation, Integer>();
+        for (Permutation q : new Permutations(k)) {
+            result.put(q, 0);
+        }
+        Combinations cs = new Combinations(n, k);
+        while (true) {
+            Permutation q = p.patternAt(cs.getC());
+            result.put(q, result.get(q) + 1);
+            if (!cs.hasNext()) {
+                break;
+            }
+            cs.next();
+        }
+        return result;
+    }
+}

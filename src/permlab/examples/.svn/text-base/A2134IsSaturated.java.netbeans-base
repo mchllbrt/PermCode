@@ -1,0 +1,43 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.HashSet;
+import permlab.PermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.SimplePermClass;
+import permlab.property.HereditaryProperty;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class A2134IsSaturated {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        SimplePermClass cs = new SimplePermClass("2134");
+        HashSet<Permutation> s = cs.getPerms(13);
+        PermClass c = new PermClass("2134");
+        for(int n = 4; n <= 8; n++) {
+            System.out.println("n = " + n);
+            for(Permutation p : c.getPerms(n)) {
+                HereditaryProperty ap = PermUtilities.avoidanceTest(p);
+                boolean allAvoid = true;
+                for(Permutation q : s) {
+                    if (!ap.isSatisfiedBy(q)) {
+                        // System.out.println(p + " " + q);
+                        allAvoid = false;
+                        break;
+                    }
+                }
+                if (allAvoid) System.out.println("Example " + p);
+            }
+        }
+    }
+}

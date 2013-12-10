@@ -1,0 +1,531 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import permlab.PermStatistics;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.Permutations;
+import permlab.property.PermProperty;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class StackProducts {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // inverseImageInversions(5);
+        // for(int n = 1; n < 10; n++) System.out.println(n + " " + countDoubleSorted(n));
+//        sortedAv231Inv132(6);
+//        System.out.println();
+//        sortedInv231Av132(6);
+
+//        Permutation q = new Permutation("1 4 3 2 5 6");
+//        System.out.println(canonicalTree(q));
+
+        // treeCheck(7);
+
+//        for(Permutation q : new Permutations(5)) {
+//            BinaryTree t = canonicalTree(S(q));
+//            System.out.println(t.toPSTree());
+//            if (!t.isCanonical()) System.out.println(S(q) + " " + t);
+//        }
+//        System.out.println("Done");
+
+        // canonicalTrees(7);
+        // testFirst132Conjecture(11);
+        countAvoiders(7);
+
+    }
+
+    public static Permutation S(Permutation p) {
+        Deque<Integer> stack = new ArrayDeque<Integer>();
+        int[] r = new int[p.length()];
+        int index = 0;
+        for (int i : p.elements) {
+            while (stack.size() != 0 && i > stack.peek()) {
+                r[index++] = stack.pop();
+            }
+            stack.push(i);
+        }
+        while (stack.size() > 0) {
+            r[index++] = stack.pop();
+        }
+        return new Permutation(r);
+    }
+
+    public static Permutation R(Permutation p) {
+        return p.reverse();
+    }
+
+    public static void countAvoiders(int n) {
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashMap<Permutation, Integer> outs = new HashMap<Permutation, Integer>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(R(S(p)));
+            if (outs.containsKey(q)) {
+                outs.put(q, outs.get(q) + 1);
+            } else {
+                outs.put(q, 1);
+            }
+        }
+        System.out.println(outs.size());
+        System.out.println("Involving 132, avoiding 231");
+        for (Permutation q : outs.keySet()) {
+            if (a231.isSatisfiedBy(q) && !a132.isSatisfiedBy(q)) {
+                System.out.println((outs.get(q) + "      ").substring(0,6) + q);
+            }
+        }
+        System.out.println();
+        System.out.println("Avoiding 132, involving 231");
+        for (Permutation q : outs.keySet()) {
+            if (!a231.isSatisfiedBy(q) && a132.isSatisfiedBy(q)) {
+                System.out.println((outs.get(q) + "      ").substring(0,6) + q);
+            }
+        }
+        System.out.println();
+        
+    }
+
+    public static void sortedAv231Inv132(int n) {
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashSet<Permutation> outs = new HashSet<Permutation>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(p);
+            if (a231.isSatisfiedBy(q) && !a132.isSatisfiedBy(q)) {
+                outs.add(q);
+            }
+        }
+        for (Permutation q : outs) {
+            System.out.println(q);
+        }
+    }
+
+    public static void sortedInv231Av132(int n) {
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashSet<Permutation> outs = new HashSet<Permutation>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(p);
+            if (!a231.isSatisfiedBy(q) && a132.isSatisfiedBy(q)) {
+                outs.add(q);
+            }
+        }
+        for (Permutation q : outs) {
+            System.out.println(q);
+        }
+    }
+
+    public static void inverseImageInversions(int n) {
+        HashMap<Permutation, HashSet<Permutation>> outs = new HashMap<Permutation, HashSet<Permutation>>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(S(p));
+            if (!outs.containsKey(q)) {
+                outs.put(q, new HashSet<Permutation>());
+            }
+            outs.get(q).add(p);
+        }
+        for (Permutation q : outs.keySet()) {
+//            int mi = -1;
+//            int miCount = 1;
+//            Permutation miP = new Permutation(n);
+//            for (Permutation p : outs.get(q)) {
+//                int pi = PermUtilities.inversions(p);
+//                if (pi == mi) {
+//                    miCount++;
+//                }
+//                if (pi > mi) {
+//                    mi = pi;
+//                    miCount = 1;
+//                    miP = p;
+//                }
+//
+//            }
+//            System.out.println(q + " " + mi + " " + miCount + " " + miP);
+            System.out.println(q);
+            for (Permutation p : outs.get(q)) {
+                System.out.println(PermStatistics.inversions(p) + " " + p);
+            }
+            System.out.println();
+        }
+
+
+
+    }
+
+    public static int countDoubleSorted(int n) {
+        HashSet<Permutation> outs = new HashSet<Permutation>();
+        for (Permutation p : new Permutations(n)) {
+            outs.add(S(S(p)));
+        }
+        return outs.size();
+    }
+
+    public static BinaryTree canonicalTree(Permutation p) {
+        BinaryTree result = null;
+        int top = p.length() - 1;
+        int i = p.length() - 2;
+        while (i >= 0 && p.elements[i] < p.elements[i + 1]) {
+            i--;
+        }
+        result = sequenceTree(p.elements, i + 1, top);
+        // System.out.println(result);
+        top = i;
+        while (top >= 0) {
+            i = top - 1;
+            while (i >= 0 && p.elements[i] < p.elements[i + 1]) {
+                i--;
+            }
+            // System.out.println((i+1) + " " + top);
+
+            addSequence(result, p.elements, i + 1, top);
+            // System.out.println(result);
+            top = i;
+        }
+        return result;
+    }
+
+    private static void addSequence(BinaryTree t, int[] e, int low, int high) {
+        BinaryTree branch = sequenceTree(e, low, high);
+        // System.out.println("Branch: " + branch);
+        BinaryTree s = t;
+        do {
+            while (s.left != null) {
+                s = s.left;
+            }
+            BinaryTree n = s.right;
+            while (n.left != null) {
+                n = n.left;
+            }
+            if (branch.root > n.root) {
+                s.addLeft(branch);
+                return;
+            }
+            s = n;
+        } while (true);
+    }
+
+    private static BinaryTree sequenceTree(int[] e, int low, int high) {
+        BinaryTree result = null;
+        BinaryTree t = new BinaryTree(e[low]);
+        result = t;
+        int i = low + 1;
+        while (i <= high) {
+            result = new BinaryTree(e[i]);
+            result.addRight(t);
+            t = result;
+            i++;
+        }
+        return result;
+    }
+
+    static class BinaryTree {
+
+        int root;
+        BinaryTree left = null;
+        BinaryTree right = null;
+
+        public BinaryTree(int root) {
+            this.root = root;
+        }
+
+        public void setRoot(int root) {
+            this.root = root;
+        }
+
+        public void addRight(BinaryTree right) {
+            this.right = right;
+        }
+
+        public void addLeft(BinaryTree left) {
+            this.left = left;
+        }
+
+        public boolean isCanonical() {
+            if (this.left == null) {
+                return this.right == null || this.right.isCanonical();
+            }
+            if (this.right == null) {
+                return false;
+            }
+            if (this.left.root < this.right.leftMostRoot()) {
+                return false;
+            }
+            return this.left.isCanonical() && this.right.isCanonical();
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final BinaryTree other = (BinaryTree) obj;
+            if (this.root != other.root) {
+                return false;
+            }
+            if (this.left != other.left && (this.left == null || !this.left.equals(other.left))) {
+                return false;
+            }
+            if (this.right != other.right && (this.right == null || !this.right.equals(other.right))) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 7 + 23 * root;
+            hash = 59 * hash + (this.left != null ? this.left.hashCode() : 0);
+            hash = 59 * hash + (this.right != null ? this.right.hashCode() : 0);
+            return hash;
+        }
+
+        public int size() {
+            return 1
+                    + (this.left == null ? 0 : this.left.size())
+                    + (this.right == null ? 0 : this.right.size());
+        }
+
+        public BinaryTree copy() {
+            BinaryTree result = new BinaryTree(this.root);
+            if (this.left != null) {
+                result.addLeft(this.left.copy());
+            }
+            if (this.right != null) {
+                result.addRight(this.right.copy());
+            }
+            return result;
+        }
+
+        public BinaryTree copy0() {
+            BinaryTree result = this.copy();
+            result.setZero();
+            return result;
+        }
+
+        public void setZero() {
+            this.root = 0;
+            if (this.left != null) {
+                this.left.setZero();
+            }
+            if (this.right != null) {
+                this.right.setZero();
+            }
+        }
+
+        public String toString() {
+            StringBuilder result = new StringBuilder();
+            result.append(root + 1);
+            result.append("[");
+            if (this.left != null) {
+                result.append(this.left.toString());
+            }
+            result.append("](");
+            if (this.right != null) {
+                result.append(this.right.toString());
+            }
+            result.append(")");
+            return result.toString();
+        }
+
+        public String toPSTree() {
+            return this.toPSTree("");
+        }
+
+        public String toPSTree(String padding) {
+            StringBuilder result = new StringBuilder();
+            result.append(padding + "\\pstree[nodesepA=3pt, nodesepB=3pt, levelsep=1]{\\TR{" + (root + 1) + "}}{\n");
+            if (this.left != null || this.right != null) {
+                if (this.left == null) {
+                    result.append(padding + "  \\Tn\n");
+                } else {
+                    result.append(this.left.toPSTree(padding + "  "));
+                    result.append("\n");
+                }
+                if (this.right == null) {
+                    result.append(padding + "  \\Tn\n");
+                } else {
+                    result.append(this.right.toPSTree(padding + "  "));
+                    result.append("\n");
+                }
+            }
+            result.append(padding + "}");
+            return result.toString();
+        }
+
+        private int leftMostRoot() {
+            int result = this.root;
+            BinaryTree t = this.left;
+            while (t != null) {
+                result = t.root;
+                t = t.left;
+            }
+            return result;
+        }
+
+        private Permutation postOrder() {
+            ArrayList<Integer> e = new ArrayList<Integer>();
+            this.postOrder(e);
+            int[] v = new int[e.size()];
+            for (int i = 0; i < e.size(); i++) {
+                v[i] = e.get(i);
+            }
+            return new Permutation(v);
+        }
+
+        private void postOrder(ArrayList<Integer> e) {
+            if (this.left != null) {
+                this.left.postOrder(e);
+            }
+            if (this.right != null) {
+                this.right.postOrder(e);
+            }
+            e.add(this.root);
+            return;
+        }
+    }
+
+    public static void treeCheck(int n) {
+        HashMap<BinaryTree, Integer> has132 = new HashMap<BinaryTree, Integer>();
+        HashMap<BinaryTree, Integer> has231 = new HashMap<BinaryTree, Integer>();
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashSet<Permutation> outs = new HashSet<Permutation>();
+        for (Permutation p : new Permutations(n)) {
+            Permutation q = S(p);
+            if (outs.contains(q)) {
+                continue;
+            }
+            outs.add(q);
+            if (!a231.isSatisfiedBy(q) && a132.isSatisfiedBy(q)) {
+                BinaryTree t = canonicalTree(q);
+                t.setZero();
+                if (has132.containsKey(t)) {
+                    has132.put(t, has132.get(t) + 1);
+                } else {
+                    has132.put(t, 1);
+                }
+            }
+            if (a231.isSatisfiedBy(q) && !a132.isSatisfiedBy(q)) {
+                // System.out.println(q);
+                BinaryTree t = canonicalTree(q);
+                t.setZero();
+                if (has231.containsKey(t)) {
+                    has231.put(t, has231.get(t) + 1);
+                } else {
+                    has231.put(t, 1);
+                }
+            }
+
+        }
+        System.out.println(has231.size() + " " + has132.size());
+        for (BinaryTree t : has231.keySet()) {
+            System.out.println(has231.get(t) + " " + has132.get(t));
+        }
+    }
+
+    public static void canonicalTrees(int n) {
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashMap<BinaryTree, HashSet<BinaryTree>> treeMap = new HashMap<BinaryTree, HashSet<BinaryTree>>();
+        for (Permutation p : new Permutations(n)) {
+            BinaryTree tt = canonicalTree(S(p));
+            BinaryTree tz = tt.copy();
+            tz.setZero();
+            HashSet<BinaryTree> sp = new HashSet<BinaryTree>();
+            if (treeMap.containsKey(tz)) {
+                sp = treeMap.get(tz);
+            }
+            sp.add(tt);
+            treeMap.put(tz, sp);
+        }
+        for (BinaryTree tz : treeMap.keySet()) {
+            HashSet<BinaryTree> ts = treeMap.get(tz);
+            for (BinaryTree t : ts) {
+                System.out.println("\\begin{tabular}{|ll|}\\hline");
+                System.out.println(t.toPSTree() + " & ");
+                Permutation p = t.postOrder();
+                System.out.print("\\begin{tabular}[t]{l}");
+                if (!a132.isSatisfiedBy(p)) {
+                    System.out.print("132 \\\\");
+                }
+                if (!a231.isSatisfiedBy(p)) {
+                    System.out.print("231");
+                }
+                System.out.println("\\end{tabular}\\\\");
+                System.out.println("\\hline\n\\end{tabular}");
+
+            }
+            System.out.println();
+        }
+    }
+
+    public static void testFirst132Conjecture(int n) {
+        // That in the postorder of a canonical tree, the minimum 2 of
+        // a 132 is associated with *all* smaller elements as 1's, for
+        // the same 3 (assuming 231 is avoided)
+        PermProperty a231 = PermUtilities.avoidanceTest("231");
+        PermProperty a132 = PermUtilities.avoidanceTest("132");
+        HashSet<BinaryTree> trees = new HashSet<BinaryTree>();
+        for (Permutation p : new Permutations(n)) {
+            BinaryTree tt = canonicalTree(S(p));
+            trees.add(tt);
+        }
+        for (BinaryTree t : trees) {
+            Permutation p = t.postOrder();
+            if (!a132.isSatisfiedBy(p) && a231.isSatisfiedBy(p)) {
+                // Find smallest 2
+                int[] e = p.elements;
+                int min2 = e.length;
+                int min2Index = -1;
+                int maxSoFar = -1;
+                int minSoFar = e.length;
+                int minBeforeMax = e.length;
+                for (int i = 0; i < e.length; i++) {
+                    if (e[i] > maxSoFar) {
+                        maxSoFar = e[i];
+                        minBeforeMax = minSoFar;
+                    } else if (e[i] < minSoFar) {
+                        minSoFar = e[i];
+                    } else if (e[i] > minBeforeMax && e[i] < min2) {
+                        min2 = e[i];
+                        min2Index = i;
+                    }
+                }
+                if (min2Index > 0) {
+                    int j = 0;
+                    while (e[j] < min2) {
+                        j++;
+                    }
+                    int oneCount = 0;
+                    for (int i = 0; i < j; i++) {
+                        if (e[i] < min2) {
+                            oneCount++;
+                        }
+                    }
+                    if (oneCount != min2) {
+                        System.out.println("Counterexample");
+                        System.out.println(t);
+                        System.out.println(p);
+                    }
+                }
+            }
+        }
+    }
+}

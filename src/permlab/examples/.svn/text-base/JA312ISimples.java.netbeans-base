@@ -1,0 +1,52 @@
+package permlab.examples;
+
+import permlab.PermUtilities;
+import permlab.SimplePermClass;
+import permlab.processor.PermCounter;
+import permlab.property.Griddable;
+import permlab.property.PermProperty;
+
+/**
+ * Count the simples in the juxtaposition of various classes
+ * @author Michael Albert
+ */
+public class JA312ISimples {
+
+    public static void main(String[] args) {
+
+        PermProperty a312 = PermUtilities.avoidanceTest("312");
+        PermProperty inc = PermUtilities.avoidanceTest("21");
+
+        PermProperty classProp = new Griddable(new PermProperty[][]{{a312, a312}});
+        SimplePermClass s = new SimplePermClass(classProp);
+        PermCounter counter = new PermCounter();
+
+//        System.out.println("A312, A312");
+//        for (int n = 4; n <= 14; n++) {
+//            s.processPerms(n, counter);
+//            System.out.print(counter.getCount() + " ");
+//            counter.reset();
+//        }
+//        System.out.println();
+//        
+//        classProp = new Griddable(new PermProperty[][]{{new Avoids("312"), new Avoids("12")}});
+//        System.out.println("A312, Dec");
+//        for (int n = 4; n <= 14; n++) {
+//            s.processPerms(n, counter);
+//            System.out.print(counter.getCount() + " ");
+//            counter.reset();
+//        }
+//        System.out.println();
+//
+//        classProp = new Griddable(new PermProperty[][]{{new Avoids("132"), new Avoids("21")}});
+//        System.out.println("A132, Inc");
+//        for (int n = 4; n <= 14; n++) {
+//            s.processPerms(n, counter);
+//            System.out.print(counter.getCount() + " ");
+//            counter.reset();
+//        }
+//        System.out.println();
+
+
+    }
+}

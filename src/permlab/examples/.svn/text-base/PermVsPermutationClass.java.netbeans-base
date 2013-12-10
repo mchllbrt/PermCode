@@ -1,0 +1,47 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import permlib.PermClass;
+import permlib.classes.PermClassInterface;
+import permlib.Permutation;
+import permlib.classes.PermutationClass;
+import permlib.Permutations;
+import permlib.processor.PermCounter;
+import permlib.processor.PermProcessor;
+import permlib.property.Griddable;
+import permlib.property.HereditaryProperty;
+import permlib.property.HereditaryPropertyAdapter;
+import permlib.property.PermProperty;
+
+/**
+ *
+ * @author MichaelAlbert
+ */
+public class PermVsPermutationClass {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        PermClassInterface c = new PermClass("321");
+        PermProperty g = new Griddable( new PermProperty[][] {{PermProperty.INCREASING, PermProperty.INCREASING}, {PermProperty.EMPTY, PermProperty.INCREASING}});
+        HereditaryProperty prop = HereditaryPropertyAdapter.forceHereditary(g);
+        PermProcessor proc = new PermCounter(prop);
+        long start = System.currentTimeMillis();
+        int n = 13;
+        c.processPerms(n, proc);
+        System.out.println("PermClass " + proc.report() + " time " + (System.currentTimeMillis() - start));              
+        c = new PermutationClass("321");
+        int count = 0;
+        start = System.currentTimeMillis();
+        for(Permutation p : new Permutations(c, n, prop)) count++;
+        System.out.println("PermutationClass " + count + " time " + (System.currentTimeMillis() - start));              
+        count = 0;
+        start = System.currentTimeMillis();
+        for(Permutation p : new Permutations(c, n, g)) count++;
+        System.out.println("PermutationClass " + count + " time " + (System.currentTimeMillis() - start));       
+    }
+}

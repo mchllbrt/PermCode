@@ -1,0 +1,19 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.utilities;
+
+/**
+ *
+ * @author mbelton
+ */
+public interface ExportInterface {
+    
+    public static boolean rememberSavePSTricksState = false;
+    public static boolean savePSTricksAsFile = false;
+    public static boolean rememberSaveTikZState = false;
+    public static boolean saveTikZAsFile = false;
+    
+    public void export(RestrictedPermutation restPerm);
+}

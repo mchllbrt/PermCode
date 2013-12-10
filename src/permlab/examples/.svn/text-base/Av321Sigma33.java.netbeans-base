@@ -1,0 +1,210 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import permlab.utilities.IntPair;
+import permlab.PermUtilities;
+import permlab.Permutation;
+import permlab.property.Involves;
+
+/**
+ * Try to construct a reasonably long example of a four box sigma_3,3 (and
+ * inverse) avoiding 321 avoider.
+ * 
+ * @author Michael Albert
+ */
+public class Av321Sigma33 {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+
+//        Permutation p = generic(4,3);
+//        System.out.println(p);
+//        System.out.println(Arrays.toString(reverseGreedyBlockSizes(p)));
+//        System.out.println(Arrays.toString(greedyBlockSizes(p)));
+//     
+        generateExample();
+    }
+
+    public static void generateExample() {
+
+        int totalSize = 80;
+        while (true) {
+            IntPair[] pairs = new IntPair[totalSize];
+            for (int i = 0; i < totalSize; i++) {
+                int block = (int) (Math.random() * 4);
+                if (block == 0) {
+                    pairs[i] = new IntPair(i, i);
+                }
+                if (block == 1) {
+                    pairs[i] = new IntPair(totalSize + i, i);
+                }
+                if (block == 2) {
+                    pairs[i] = new IntPair(totalSize + i, totalSize + i);
+                }
+                if (block == 3) {
+                    pairs[i] = new IntPair(2 * totalSize + i, totalSize + i);
+                }
+
+            }
+            Arrays.sort(pairs);
+            int[] elements = new int[totalSize];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = pairs[i].getSecond();
+            }
+            Permutation p = new Permutation(elements);
+            Involves s33 = new Involves(generic(3, 3));
+            Involves s33i = new Involves(generic(3, 3).inverse());
+            int[] indices = s33.involvedWhere(p);
+            while (indices.length > 0) {
+                //p = PermUtilities.delete(p, indices[indices.length-1]);
+                p = PermUtilities.delete(p, indices[(int) (Math.random() * indices.length)]);
+                indices = s33.involvedWhere(p);
+            }
+            indices = s33i.involvedWhere(p);
+            while (indices.length > 0) {
+                // p = PermUtilities.delete(p, indices[indices.length-1]);
+                p = PermUtilities.delete(p, indices[(int) (Math.random() * indices.length)]);
+                indices = s33i.involvedWhere(p);
+            }
+            Involves s32 = new Involves(generic(3, 2));
+            System.out.println(generic(3, 2));
+            if (s32.isSatisfiedBy(p)) {
+                System.out.println(toPSTricks(p, s32));
+                System.out.println();
+                break;
+            }
+        }
+    }
+
+    public static Permutation generic(int blocks, int blockSize) {
+        IntPair[] pairs = new IntPair[blocks * blockSize];
+        int pairNumber = 0;
+        for (int index = 0; index < blockSize; index++) {
+            for (int block = blocks - 1; block >= 0; block--) {
+                pairs[pairNumber] = new IntPair(((block + 1) / 2) * 5 * blockSize + pairNumber, (block / 2) * 5 * blockSize + pairNumber);
+                pairNumber++;
+            }
+        }
+        Arrays.sort(pairs);
+        int[] elements = new int[pairs.length];
+        for (int i = 0; i < elements.length; i++) {
+            elements[i] = pairs[i].getSecond();
+        }
+        return new Permutation(elements);
+
+    }
+
+    public static String toPSTricks(Permutation p, Involves inv) {
+        int DX = 10;
+        int DY = 10;
+        int unit = 1;
+        StringBuilder result = new StringBuilder();
+        result.append("\\psset{" + "xunit=" + unit
+                + "pt, " + "yunit=" + unit + "pt, " + "runit=" + unit + "pt" + "}\n"
+                + "\\begin{pspicture}(0,0)" + "(" + ((p.length() + 1) * DX) + ","
+                + ((p.length() + 1) * DY) + ")\n");
+        for (int i = 0; i < p.length(); i++) {
+            result.append("\\pscircle*(" + (i + 1) * DX + "," + (p.elements[i] + 1) * DY + "){2}\n");
+        }
+        Integer[] blockSizes = reverseGreedyBlockSizes(p);
+        int[] blockSums = new int[blockSizes.length + 2];
+        blockSums[0] = 0;
+        for (int i = 1; i <= blockSizes.length; i++) {
+            blockSums[i] = blockSums[i - 1] + blockSizes[i - 1];
+        }
+        blockSums[blockSums.length - 1] = blockSums[blockSums.length - 2];
+        int[] lx = new int[blockSizes.length];
+        int[] ux = new int[blockSizes.length];
+        int[] uy = new int[blockSizes.length];
+        int[] ly = new int[blockSizes.length];
+        lx[0] = DX / 2;
+        ly[0] = DY / 2;
+        ux[0] = blockSums[1] * DX + DX / 2;
+        uy[0] = blockSums[2] * DY + DY / 2;
+        for (int i = 1; i < lx.length; i++) {
+            lx[i] = DX * blockSums[((i - 1) / 2) * 2 + 1] + DX / 2;
+            ux[i] = DY * blockSums[((i - 1) / 2) * 2 + 3] + DY / 2;
+        }
+        for (int i = 1; i < ly.length; i++) {
+            ly[i] = DX * blockSums[(i / 2) * 2] + DX / 2;
+            uy[i] = DY * blockSums[((i) / 2) * 2 + 2] + DY / 2;
+        }
+        for (int i = 0; i < blockSizes.length; i++) {
+            result.append("\\pspolygon"
+                    + "(" + lx[i] + "," + ly[i] + ")"
+                    + "(" + ux[i] + "," + ly[i] + ")"
+                    + "(" + ux[i] + "," + uy[i] + ")"
+                    + "(" + lx[i] + "," + uy[i] + ")\n");
+        }
+        if (inv != null) {
+            int[] indices = inv.involvedWhere(p);
+            for (int i = 0; i < indices.length; i++) {
+                result.append("\\pscircle*(" + (indices[i] + 1) * DX + "," + (p.elements[indices[i]] + 1) * DY + "){4}\n");
+            }
+
+        }
+
+        result.append("\\end{pspicture}\n");
+
+        return result.toString();
+    }
+
+    public static int firstDescent(Permutation p) {
+        int result = 1;
+        while (result < p.length() && p.elements[result] > p.elements[result - 1]) {
+            result++;
+        }
+        return result;
+    }
+
+    public static int lastDescent(Permutation p) {
+        int result = p.length() - 1;
+        while (result > 0 && p.elements[result] > p.elements[result - 1]) {
+            result--;
+        }
+        return result;
+    }
+
+    public static Integer[] greedyBlockSizes(Permutation p) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int block = firstDescent(p);
+        result.add(block);
+        int[] newElements = Arrays.copyOfRange(p.elements, block, p.elements.length);
+        while (newElements.length > 0) {
+            Permutation q = (new Permutation(newElements)).inverse();
+            block = firstDescent(q);
+            result.add(block);
+            newElements = Arrays.copyOfRange(q.elements, block, q.elements.length);
+        }
+        Integer[] r = new Integer[result.size()];
+        result.toArray(r);
+        return r;
+
+
+    }
+
+    public static Integer[] reverseGreedyBlockSizes(Permutation p) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        int block = lastDescent(p);
+        result.add(p.length() - block);
+        int[] newElements = Arrays.copyOfRange(p.elements, 0, block);
+        while (newElements.length > 0) {
+            Permutation q = (new Permutation(newElements)).inverse();
+            block = lastDescent(q);
+            result.add(0, q.length() - block);
+            newElements = Arrays.copyOfRange(q.elements, 0, block);
+        }
+        Integer[] r = new Integer[result.size()];
+        result.toArray(r);
+        return r;
+
+
+    }
+}

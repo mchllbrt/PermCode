@@ -1,0 +1,27 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import permlab.Permutation;
+import permlab.Permutations;
+import permlab.Symmetry;
+
+/**
+ *
+ * @author malbert
+ */
+public class IRCFixed {
+
+    public static void main(String[] args) {
+
+
+        for (Permutation p : new Permutations(3)) {
+
+            if (Symmetry.IRC.on(p).equals(p)) {
+                System.out.println(p);
+            }
+        }
+    }
+}

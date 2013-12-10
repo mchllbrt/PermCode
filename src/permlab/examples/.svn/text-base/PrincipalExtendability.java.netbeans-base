@@ -1,0 +1,223 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package permlab.examples;
+
+import java.util.ArrayList;
+import java.util.List;
+import permlab.*;
+import permlab.property.Involves;
+import permlab.property.PermProperty;
+
+/**
+ * Does every principal class allow extensions of every permutation in every
+ * position?
+ *
+ * @author Michael Albert
+ */
+public class PrincipalExtendability {
+
+    private static int MAX_LENGTH = 12;
+
+    public static void main(String[] args) {
+        int count = 0;
+        for (Permutation p : new Permutations(8)) {
+            count++;
+            if (count % 1000 == 0) {
+                System.out.println("Processing " + count);
+            }
+            if (PermUtilities.isSymmetryRep(p) && Symmetry.IRC.on(p).equals(p)) {
+                List<PermProperty> basis = new ArrayList<PermProperty>();
+                for (Permutation q : new Permutations(12)) {
+                    if (Symmetry.IRC.on(q).equals(q)) {
+                        List<Integer> cp = candidatePositions(q);
+                        if (cp.size() > 0) {
+
+                            for (int i : cp) {
+                                PermProperty avp = PermUtilities.avoidanceTest(p);
+                                if (avp.isSatisfiedBy(q)) {
+                                    if (!hasCuttingExtension(q, i, avp)) {
+                                        System.out.println(p + " | " + q);
+                                    }
+                                }
+                            }
+                        }
+                        // counterCheck();
+                    }
+                }
+            }
+
+        }
+        System.out.println("Done");
+    }
+
+    private static void checkExtendable(final Permutation p) {
+        PermClass c = new PermClass(p);
+        for (int n = p.length(); n <= MAX_LENGTH; n++) {
+            for (Permutation q : c.getPerms(n)) {
+                for (int i = 0; i <= q.length(); i++) {
+                    if (!extensible(q, i, c)) {
+                        System.out.println("Counterexample. Basis: " + p + ", permutation " + q + " at position " + i);
+                        return;
+                    }
+                }
+            }
+        }
+        System.out.println(p + " is extensible through length " + MAX_LENGTH);
+    }
+
+    private static boolean extensible(Permutation q, int i, PermClass c) {
+        for (int v = 0; v <= q.length(); v++) {
+            if (c.containsPermutation(PermUtilities.insert(q, i, v))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int checkPair(Permutation q, Permutation p) {
+        PermProperty avp = PermUtilities.avoidanceTest(p);
+        if (!avp.isSatisfiedBy(q)) {
+            return -1;
+        }
+        for (int i = 0; i < q.length() - 1; i++) {
+            if (!hasCuttingExtension(q, i, avp)) {
+                return i;
+            }
+        }
+//        for (int i = 0; i <= q.length(); i++) {
+//            boolean iGood = false;
+//            for (int v = 0; v <= q.length(); v++) {
+//                iGood = isGoodExtension(q, i, v, avp);
+//                if (iGood) {
+//                    break;
+//                }
+//            }
+//            if (!iGood) {
+//                return i;
+//            }
+//        }
+        return -1;
+    }
+
+    private static boolean isGoodExtension(Permutation q, int i, int v, PermProperty prop) {
+        if ((i == 0 || i == q.length()) && (v == 0 || v == q.length())) {
+            return false;
+        }
+        if (i < q.length() && (v == q.elements[i] + 1 || v == q.elements[i])) {
+            return false;
+        }
+        if (i > 0 && (v == q.elements[i - 1] + 1 || v == q.elements[i - 1])) {
+            return false;
+        }
+        return prop.isSatisfiedBy(PermUtilities.insert(q, i, v));
+    }
+
+    private static boolean hasCuttingExtension(Permutation q, int i, PermProperty prop) {
+        int a = q.elements[i];
+        int b = q.elements[i + 1];
+        int low = (a < b) ? a : b;
+        int high = (a < b) ? b : a;
+        if (high - low > 1) {
+            return true;
+        }
+        for (int v = 0; v <= low - 1; v++) {
+            if (isGoodExtension(q, i + 1, v, prop)) {
+                return true;
+            }
+        }
+        for (int v = high + 2; v <= q.length(); v++) {
+            if (isGoodExtension(q, i + 1, v, prop)) {
+                return true;
+            }
+        }
+        for (int j = 0; j <= i - 1; j++) {
+            if (isGoodExtension(q, j, high, prop)) {
+                return true;
+            }
+        }
+        for (int j = i + 3; j <= q.length(); j++) {
+            if (isGoodExtension(q, j, high, prop)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasExtremeCuttingExtension(Permutation q, int i, PermProperty prop) {
+        int a = q.elements[i];
+        int b = q.elements[i + 1];
+        int low = (a < b) ? a : b;
+        int high = (a < b) ? b : a;
+        if (high - low > 1) {
+            return true;
+        }
+        if (low - 1 >= 0 && isGoodExtension(q, i + 1, 0, prop)) {
+            return true;
+        }
+        if (high + 2 <= q.length() && isGoodExtension(q, i + 1, q.length(), prop)) {
+            return true;
+        }
+        if (0 <= i - 1 && isGoodExtension(q, 0, high, prop)) {
+            return true;
+        }
+        if (i + 3 <= q.length() && isGoodExtension(q, q.length(), high, prop)) {
+            return true;
+        }
+        return false;
+    }
+
+    private static void counterCheck() {
+        SimplePermClass s = new SimplePermClass(new Permutation("251364"));
+        for (Permutation p : PermUtilities.inferredBasis(s.getPerms(10), 8)) {
+            System.out.println(p);
+        };
+
+//        final PermProperty inv = new Involves("25173486");
+//        PermProcessor proc = new PermProcessor() {
+//
+//            @Override
+//            public void process(Permutation p) {
+//                if (inv.isSatisfiedBy(p)) {
+//                    System.out.println(p);
+//                    System.exit(0);
+//                };
+//            }
+//
+//            @Override
+//            public void reset() {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//
+//            @Override
+//            public String report() {
+//                throw new UnsupportedOperationException("Not supported yet.");
+//            }
+//            
+//        };
+//        for(int n = 9; n <= 20; n++) {
+//            System.out.println("n = " + n);
+//            s.processPerms(n, proc);
+//        }
+    }
+
+    private static List<Integer> candidatePositions(Permutation q) {
+        List<Integer> result = new ArrayList<Integer>();
+        for (int i = 0; i < q.length() - 1; i++) {
+            int d = q.elements[i + 1] - q.elements[i];
+            if (d == 1 || d == -1) {
+                result.add(i);
+            }
+        }
+        return result;
+    }
+
+    private static boolean check(Permutation p, Permutation q, int i) {
+        PermProperty avp = PermUtilities.avoidanceTest(p);
+        if (!avp.isSatisfiedBy(q)) {
+            return false;
+        }
+        return !hasCuttingExtension(q, i, avp);
+    }
+}

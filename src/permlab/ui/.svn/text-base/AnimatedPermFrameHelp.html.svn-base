@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Permlab: help for animation window</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <div>
+            <h2>Description</h2>
+            <p>
+                The <i>animation window</i> allows you to view an animation
+                of a selection of permutations.
+            </p>
+            <h2>Details</h2>
+            <p>
+                An animation window must be initialised with a supply of 
+                permutations, usually from another element of <i>PermLab</i>.
+                For instance, the class window can generate animations, or 
+                a text window can be used to load a file and then animate the
+                permutations it contains.
+            </p>
+            <p>
+                The controls are straightforward with a slider controlling the
+                speed of the animation, various buttons that control the animation
+                running, and a text field allowing direct entry of a frame number.
+            </p>
+            <p>
+                The <i>Sort</i> button sorts the background collection of permutations
+                by length, and then lexicographically within length. This is sometimes
+                useful to produce a more structured view of the collection.
+            </p>
+            <p>
+                There is a right-click menu available in the main display area which
+                allows the current permutation, or all the permutations of this movie
+                to be shown as text. The <i>Show as PSTricks</i> option is not currently
+                functional.
+            </p>
+        </div>
+    </body>
+</html>

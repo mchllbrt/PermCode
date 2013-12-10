@@ -1,0 +1,41 @@
+package permlab.examples;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import permlab.PermClass;
+import permlab.PermUtilities;
+import permlab.Permutation;
+
+/**
+ *
+ * @author Michael Albert
+ */
+public class MergeBasisExperiments {
+
+    public static void main(String[] args) {
+
+        List<Permutation> lp = Arrays.asList(
+                new Permutation("798465132"),
+                new Permutation("3217654")
+                );
+        
+        for(Permutation p : PermUtilities.commonSubpermutations(lp)) System.out.println(p);
+//
+//        PermClass c = new PermClass("132");
+//        PermClass d = new PermClass("321");
+//        int n = 9;
+//        HashSet<Permutation> merges = new HashSet<Permutation>();
+//        for (int i = 0; i < n; i++) {
+//            for (Permutation p : c.getPerms(i)) {
+//                for (Permutation q : d.getPerms(n - i)) {
+//                    merges.addAll(PermUtilities.merge(p, q));
+//                }
+//            }
+//        }
+//        System.out.println(merges.size());
+//        for (Permutation s : PermUtilities.inferredBasis(merges, n - 1)) {
+//            System.out.println(s);
+//        }
+    }
+}
