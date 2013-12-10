@@ -1,13 +1,16 @@
 package permlib;
 
 /**
- * This class represents a permutation.
+ * This class represents a permutation. The permutation is represented by a
+ * 0-based area of elements. This array is <em>public</em> as a matter of
+ * convenience. 
  *
  * @author Michael Albert
  */
 public class Permutation implements Comparable<Permutation> {
 
     public static final Permutation ONE = new Permutation("1");
+    
     /**
      * The elements of this permutation. <p> Internally these are represented as
      * 0-based, e.g. the identity permutation of length two has elements {0, 1}.
@@ -323,22 +326,6 @@ public class Permutation implements Comparable<Permutation> {
         }
         return new Permutation(pVals);
     }
-
-    /**
-     * Returns the number of inversions.
-     * 
-     * @return the number of inversions
-     */
-    public int inversions() {
-        int result = 0;
-        for (int i = 0; i < elements.length; i++) {
-            for (int j = i + 1; j < elements.length; j++) {
-                if (elements[i] > elements[j]) {
-                    result++;
-                }
-            }
-        }
-        return result;
-    }
+    
 }
 

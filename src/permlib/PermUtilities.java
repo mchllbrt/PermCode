@@ -608,6 +608,11 @@ public class PermUtilities {
         return avoidanceTest(new Permutation(s), useSpecialTests);
     }
 
+    /**
+     * Returns an avoidance test for the given permutation.
+     * @param p the permutation
+     * @return in avoidance test for <code>p</code>
+     */
     public static HereditaryProperty avoidanceTest(Permutation p) {
         return AvoidanceTest.getTest(p, true);
     }
@@ -687,6 +692,11 @@ public class PermUtilities {
         return new Permutation(values);
     }
 
+    /**
+     * Returns the set of all subpermutations of a permutation
+     * @param p a permutation
+     * @return the set of subpermutations of <code>p</code>
+     */
     public static HashSet<Permutation> subpermutations(Permutation p) {
         HashSet<Permutation> result = new HashSet<Permutation>();
         HashSet<Permutation> toProcess = new HashSet<Permutation>();
@@ -704,6 +714,11 @@ public class PermUtilities {
         return result;
     }
 
+    /**
+     * Returns the set of subpermutations of a set of permutations.
+     * @param ps the permutations
+     * @return the set of subpermutations of <code>ps</code>
+     */
     public static HashSet<Permutation> subpermutations(Collection<Permutation> ps) {
         HashSet<Permutation> result = new HashSet<Permutation>();
         for (Permutation p : ps) {

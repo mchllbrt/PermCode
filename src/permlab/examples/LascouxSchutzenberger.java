@@ -7,6 +7,7 @@ package permlab.examples;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
+import permlib.PermStatistics;
 import permlib.classes.MultiPermutationClass;
 import permlib.PermUtilities;
 import permlib.Permutation;
@@ -194,7 +195,7 @@ public class LascouxSchutzenberger {
         if (A2143.isSatisfiedBy(p)) {
             return result;
         }
-        int pInv = p.inversions();
+        int pInv = PermStatistics.inversions(p);
 //        System.out.println(pInv);
         RS rs = rs(p);
         for (int j = 0; j < p.length(); j++) {
@@ -205,7 +206,7 @@ public class LascouxSchutzenberger {
                 q.elements[rs.s] = q.elements[rs.r];
                 q.elements[rs.r] = v;
                 // System.out.println(q + " " + q.inversions());
-                if (q.inversions() == pInv) {
+                if (PermStatistics.inversions(q) == pInv) {
                     result.add(q);
                 }
             }
