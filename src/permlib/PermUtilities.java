@@ -11,8 +11,8 @@ import permlib.utilities.InvolutionUtilities;
  * This class contains various utility methods that apply to permutations. It's
  * a bit unwieldy but should be thought of as the equivalent of "Math", i.e. all
  * the general purpose methods that apply to permutations belong in here.
- * Methods that simply compute statistics of permutations (e.g. inversions)
- * can be found in PermStatistics.
+ * Methods that simply compute statistics of permutations (e.g. inversions) can
+ * be found in PermStatistics.
  *
  * @author Michael Albert
  */
@@ -60,9 +60,8 @@ public class PermUtilities {
     }
 
     /**
-     * Computes the four exceptional simple permutations of length
-     * <code>n</code> (for
-     * <code>n</code> even, the empty set otherwise)
+     * Computes the exceptional simple permutations of length <code>n</code>
+     * (for <code>n</code> even, the empty set otherwise)
      *
      * @param n the length
      * @return an array containing the exceptional simples of length
@@ -72,9 +71,9 @@ public class PermUtilities {
         if (n % 2 != 0) {
             return new Permutation[0];
         }
-        
+
         if (n == 4) {
-            return new Permutation[] {new Permutation("2413"), new Permutation("3142")};
+            return new Permutation[]{new Permutation("2413"), new Permutation("3142")};
         }
 
         Permutation[] result = new Permutation[4];
@@ -104,8 +103,8 @@ public class PermUtilities {
     }
 
     /**
-     * Computes the result of deleting the element at index
-     * <code>i</code> in this permutation.
+     * Computes the result of deleting the element at index <code>i</code> in
+     * this permutation.
      *
      * @param p the permutation
      * @param index the index
@@ -124,6 +123,12 @@ public class PermUtilities {
         return new Permutation(q, SAFE);
     }
 
+    /**
+     * Computes the set of all one element deletions of a permutation.
+     *
+     * @param p the permutation
+     * @return the set of all one element deletions of <code>p</code>
+     */
     public static HashSet<Permutation> deletions(Permutation p) {
         HashSet<Permutation> result = new HashSet<Permutation>();
         for (int i = 0; i < p.length(); i++) {
@@ -131,12 +136,12 @@ public class PermUtilities {
         }
         return result;
     }
-    
+
     /**
-     * Determines whether a permutation is simple.
-     * NB: This creates a new simple object for every test to ensure that the
-     * test is thread-safe. If this is not an issue it would be more efficient
-     * to just create one Simple object and use that as a test instead.
+     * Determines whether a permutation is simple. NB: This creates a new simple
+     * object for every test to ensure that the test is thread-safe. If this is
+     * not an issue it would be more efficient to just create one Simple object
+     * and use that as a test instead.
      *
      * @param p the permutation
      * @return <code>true</code> if <code>p</code> is simple, otherwise
@@ -158,11 +163,10 @@ public class PermUtilities {
     }
 
     /**
-     * Computes the result of inserting
-     * <code>value</code> at position
+     * Computes the result of inserting <code>value</code> at position
      * <code>index</code> in a permutation. Specifically, all the elements of
-     * the permutation which are greater than or equal to
-     * <code>value</code> are increased by one.
+     * the permutation which are greater than or equal to <code>value</code> are
+     * increased by one.
      *
      * @param p the permutation
      * @param index the 0-based position of the inserted element
@@ -186,9 +190,8 @@ public class PermUtilities {
 
     /**
      * Computes the result of replacing the element at position
-     * <code>index</code> in
-     * <code>p</code> by an interval isomorphic to the permutation
-     * <code>q</code>.
+     * <code>index</code> in <code>p</code> by an interval isomorphic to the
+     * permutation <code>q</code>.
      *
      * @param p the base permutation
      * @param index the index where replacement is to take place
@@ -225,8 +228,8 @@ public class PermUtilities {
     }
 
     /**
-     * Computes the minimal elements of a set
-     * <code>perms</code> of permutations with respect to involvement.
+     * Computes the minimal elements of a set <code>perms</code> of permutations
+     * with respect to involvement.
      *
      * @param perms the permutations
      * @return the minimals in <code>perms</code>
@@ -329,6 +332,14 @@ public class PermUtilities {
         return new Permutation(elements, SAFE);
     }
 
+    /**
+     * Computes the collection of all permutations that are the merge of two
+     * given permutations.
+     *
+     * @param p the first permutation
+     * @param q the second permutation
+     * @return the collection of all merges of the two permutations
+     */
     public static Collection<Permutation> merge(Permutation p, Permutation q) {
         HashSet<Permutation> result = new HashSet<Permutation>();
         int n = p.length() + q.length();
@@ -433,10 +444,22 @@ public class PermUtilities {
         return result;
     }
 
+    /**
+     * Computes the reverse of a permutation.
+     *
+     * @param p the permutation
+     * @return the reverse of <code>p</code>
+     */
     public static Permutation reverse(Permutation p) {
         return new Permutation(reverse(p.elements), SAFE);
     }
 
+    /**
+     * Computes the reverse of an array of integers.
+     *
+     * @param values the array
+     * @return its reverse
+     */
     public static int[] reverse(int[] values) {
         int[] result = new int[values.length];
         int j = values.length - 1;
@@ -446,10 +469,22 @@ public class PermUtilities {
         return result;
     }
 
+    /**
+     * Computes the complement of a permutation.
+     *
+     * @param p the permutation
+     * @return the complement of <code>p</code>
+     */
     public static Permutation complement(Permutation p) {
         return new Permutation(complement(p.elements), SAFE);
     }
 
+    /**
+     * Computes the complement of an array of integers.
+     *
+     * @param values the array
+     * @return its complement
+     */
     public static int[] complement(int[] values) {
         int[] result = new int[values.length];
         int j = values.length - 1;
@@ -459,10 +494,23 @@ public class PermUtilities {
         return result;
     }
 
+    /**
+     * Computes the inverse of a permutation.
+     *
+     * @param p the permutation
+     * @return the inverse of <code>p</code>
+     */
     public static Permutation inverse(Permutation p) {
         return new Permutation(inverse(p.elements), SAFE);
     }
 
+    /**
+     * Computes the inverse of an array of integers provided that the array
+     * represents a permutation.
+     *
+     * @param values the array
+     * @return its inverse
+     */
     public static int[] inverse(int[] values) {
         int[] result = new int[values.length];
         for (int i = 0; i < values.length; i++) {
@@ -471,6 +519,14 @@ public class PermUtilities {
         return result;
     }
 
+    /**
+     * Determines whether or not a permutation is the lex least element of its
+     * symmetry class.
+     * 
+     * @param p the permutation
+     * @return <code>true</code> if (and only if) <code>p</code> is lex least
+     * in its symmetry class
+     */
     public static boolean isSymmetryRep(Permutation p) {
         for (Symmetry s : Symmetry.values()) {
             if (s.on(p).compareTo(p) < 0) {
@@ -480,6 +536,12 @@ public class PermUtilities {
         return true;
     }
 
+    /**
+     * Computes the set of common subpermutations of a collection of permutations.
+     * @param source the collection of permutations
+     * @return the set of permutations that occur in every permutation belonging to
+     * <code>source</code>
+     */
     public static Collection<Permutation> commonSubpermutations(Collection<Permutation> source) {
         HashSet<Permutation> result = new HashSet<Permutation>();
         Deque<Permutation> queue = new ArrayDeque<Permutation>();
@@ -524,6 +586,11 @@ public class PermUtilities {
         return new Permutation(elements);
     }
 
+    /**
+     * Returns the avoidance test for a permutation represented as a string.
+     * @param s string representation of a permutation
+     * @return an avoidance test for that permutation
+     */
     public static HereditaryProperty avoidanceTest(String s) {
         return avoidanceTest(new Permutation(s), true);
     }
