@@ -8,7 +8,7 @@ import permlib.property.Universal;
 /**
  * A processor that collects all the permutations it receives into a set.
  * An optional {@link PermProperty property} limits the
- * counter to only counting permutations that satisfy the property.
+ * collector to only include permutations that satisfy the property.
  * 
  * @author Michael Albert
  */

@@ -10,7 +10,7 @@ import permlib.processor.PermCollector;
  * Represents the class of permutations having no more inversions than a given
  * bound.
  * 
- * @author MichaelAlbert
+ * @author Michael Albert
  */
 public final class BoundedInversions implements HereditaryProperty {
     

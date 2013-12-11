@@ -8,7 +8,9 @@ import permlib.property.Universal;
 /**
  * A permutation processor that just counts the number of times it is called.
  * An optional {@link PermProperty property} limits the
- * counter to only counting permutations that satisfy the property.
+ * counter to only counting permutations that satisfy the property. Additionally
+ * it is possible to specify secondary properties in order to keep track of a
+ * variety of counts.
  * 
  * @author Michael Albert
  */

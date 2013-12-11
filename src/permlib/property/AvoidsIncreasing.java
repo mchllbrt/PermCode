@@ -34,20 +34,20 @@ public final class AvoidsIncreasing implements HereditaryProperty {
      */
     @Override
     public final boolean isSatisfiedBy(int[] values) {
-        int[] minSequenceTops = new int[length];
+        int[] maxSequenceBottoms = new int[length];
         if (values.length >= length) {
             for (int i = 0; i < length; i++) {
-                minSequenceTops[i] = Integer.MAX_VALUE;
+                maxSequenceBottoms[i] = Integer.MAX_VALUE;
             }
             for (int v : values) {
                 int i = 0;
-                while (i < length && v >= minSequenceTops[i]) {
+                while (i < length && v >= maxSequenceBottoms[i]) {
                     i++;
                 }
                 if (i == length - 1) {
                     return false;
                 }
-                minSequenceTops[i] = v;
+                maxSequenceBottoms[i] = v;
             }
         }
         return true;

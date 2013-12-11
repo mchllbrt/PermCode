@@ -4,7 +4,7 @@ import permlib.Permutation;
 import permlib.utilities.InvolutionUtilities;
 
 /**
- * A class containing methods for representing an involution property.
+ * The property of being an involution.
  * 
  * @author Michael Albert
  */
