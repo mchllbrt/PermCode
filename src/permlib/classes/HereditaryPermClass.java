@@ -5,6 +5,7 @@ import java.util.Iterator;
 import permlib.Permutation;
 import permlib.processor.PermCollector;
 import permlib.processor.PermProcessor;
+import permlib.processor.RestrictedPermProcessor;
 import permlib.property.HereditaryProperty;
 import permlib.property.Intersection;
 import permlib.property.PermProperty;
@@ -36,19 +37,7 @@ public class HereditaryPermClass implements PermClassInterface {
     
     @Override
     public void processPerms(int length, final PermProcessor proc) {
-        PermProcessor restrictedProcessor = new PermProcessor() {
-            @Override
-            public void process(Permutation p) {
-                if (property.isSatisfiedBy(p)) proc.process(p);
-            }
-            @Override
-            public void reset() {proc.reset();}
-
-            @Override
-            public String report() {
-                return proc.report();
-            }
-        };
+        basicClass.processPerms(length, new RestrictedPermProcessor(proc, property));
     }
 
     @Override

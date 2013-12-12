@@ -124,13 +124,33 @@ public class RestrictedPermutation {
      * display. That is, this method tests where the restricted permutation can
      * be extended.
      */
+//    private void createForbiddenPairs() {
+//        forbiddenPairs.clear();
+//        for (int i = 0; i <= p.length(); i++) {
+//            for (int j = 0; j <= p.length(); j++) {
+//                Permutation q = p.insert(i, j);
+//                if (!hasProperties(q)) {
+//                    forbiddenPairs.add(new IntPair(i, j));
+//                }
+//            }
+//        }
+//    }
+    
     private void createForbiddenPairs() {
         forbiddenPairs.clear();
         for (int i = 0; i <= p.length(); i++) {
             for (int j = 0; j <= p.length(); j++) {
-                Permutation q = p.insert(i, j);
+                Permutation q = null;
+                if (!involution) {
+                    q = p.insert(i, j);
+                } else {
+                    q = InvolutionUtilities.insert(p, i, j);
+                }
                 if (!hasProperties(q)) {
                     forbiddenPairs.add(new IntPair(i, j));
+                    if (involution && (i != j)) {
+                        forbiddenPairs.add(new IntPair(j, i));
+                    }
                 }
             }
         }

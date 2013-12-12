@@ -20,8 +20,9 @@ import permlib.property.Universal;
 import permlib.utilities.InvolutionUtilities;
 
 /**
- *
- * @author MichaelAlbert
+ * A class of involutions defined by a property.
+ * 
+ * @author Michael Albert
  */
 public class InvolutionPermClass implements PermClassInterface {
 

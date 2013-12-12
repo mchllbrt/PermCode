@@ -25,7 +25,7 @@ public class StaticPermFrame extends javax.swing.JFrame {
 
     private ArrayList<RestrictedPermutation> history = new ArrayList<RestrictedPermutation>();
     private int currentPosition = -1;
-    private DisplayElement highlighted = null;
+    private ArrayList<DisplayElement> highlights = new ArrayList<DisplayElement>();
     private DisplayElement location;
 
     /**
@@ -340,10 +340,10 @@ public class StaticPermFrame extends javax.swing.JFrame {
      * @param evt the mouse being moved in the display panel area
      */
     private void displayPanelMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelMouseMoved
+        clearHighlights();
         if (displayPanel.contains(evt.getPoint())) {
-            highlighted = new DisplayElement(evt.getX(), evt.getY());
-        } else {
-            highlighted = null;
+            // highlighted = new DisplayElement(evt.getX(), evt.getY());
+            updateHighlights(evt.getX(), evt.getY());
         }
         repaint();
     }//GEN-LAST:event_displayPanelMouseMoved
@@ -352,7 +352,7 @@ public class StaticPermFrame extends javax.swing.JFrame {
      * Removes the highlight when the mouse leaves the display panel area.
      */
     private void displayPanelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelMouseExited
-        highlighted = null;
+        clearHighlights();
         repaint();
     }//GEN-LAST:event_displayPanelMouseExited
 
@@ -708,6 +708,19 @@ public class StaticPermFrame extends javax.swing.JFrame {
         return simpleCheckBox.isSelected();
     }
 
+    private void clearHighlights() {
+        highlights.clear();
+    }
+
+    private void updateHighlights(int x, int y) {
+       clearHighlights();
+       DisplayElement here = new DisplayElement(x,y);
+       highlights.add(here);
+       if (involutionCheckBox.isSelected()) {
+           highlights.add(here.involutionMate());
+       }
+    }
+
     /**
      * Panel that displays the permutation being worked with. 
      */
@@ -723,8 +736,8 @@ public class StaticPermFrame extends javax.swing.JFrame {
                 int dx = getWidth() / (currentState().getPerm().length() + 1);
                 int dy = getHeight() / (currentState().getPerm().length() + 1);
                 int r = Math.min(Math.min(dx, dy) / 4, PaintUtilities.DEFAULT_POINT_SIZE);
-                if (highlighted != null) {
-                    if (highlighted.isPoint()) {
+                for (DisplayElement highlighted : highlights) {
+                    if (highlighted.isPoint()) { 
                         g.setColor(Color.YELLOW);
                         int x = (highlighted.i + 1) * dx;
                         int y = getHeight() - (currentState().getPerm().elements[highlighted.i] + 1) * dy;
@@ -750,6 +763,7 @@ public class StaticPermFrame extends javax.swing.JFrame {
         private int r;
         private int i;
         private int j;
+        private boolean isPoint;
 
         /**
          * Creates new display element.
@@ -757,7 +771,7 @@ public class StaticPermFrame extends javax.swing.JFrame {
          * @param screenX x location on screen
          * @param screenY y location on screen
          */
-        public DisplayElement(int screenX, int screenY) {
+        DisplayElement(int screenX, int screenY) {
             this.x = screenX;
             this.y = displayPanel.getHeight() - screenY;
             dx = displayPanel.getWidth() / (currentState().getPerm().length() + 1);
@@ -765,6 +779,18 @@ public class StaticPermFrame extends javax.swing.JFrame {
             r = Math.min(Math.min(dx, dy) / 4, PaintUtilities.DEFAULT_POINT_SIZE);
             i = this.x / dx;
             j = this.y / dy;
+            determineType();
+        }
+        
+        DisplayElement() {};
+        
+        DisplayElement involutionMate() {
+            if (i == j) return this;
+            DisplayElement result = new DisplayElement();
+            result.i = this.j;
+            result.j = this.i;
+            result.isPoint = this.isPoint;
+            return result;
         }
 
         /**
@@ -773,22 +799,45 @@ public class StaticPermFrame extends javax.swing.JFrame {
          * @return true if it is a point
          */
         private boolean isPoint() {
+//            int tx = (x + r) / dx;
+//            int ty = (y + r) / dy;
+//            if (x - tx * dx > r || y - ty * dy > r) {
+//                return false;
+//            }
+//            tx--;
+//            ty--;
+//            if (tx < 0 || tx >= currentState().getPerm().length()) {
+//                return false;
+//            }
+//            if (currentState().getPerm().elements[tx] != ty) {
+//                return false;
+//            }
+//            i = tx;
+//            j = ty;
+//            return true;
+            return isPoint;
+        }
+        
+        private void determineType() {
             int tx = (x + r) / dx;
             int ty = (y + r) / dy;
             if (x - tx * dx > r || y - ty * dy > r) {
-                return false;
+                isPoint = false;
+                return;
             }
             tx--;
             ty--;
             if (tx < 0 || tx >= currentState().getPerm().length()) {
-                return false;
+                isPoint = false;
+                return;
             }
             if (currentState().getPerm().elements[tx] != ty) {
-                return false;
+                isPoint = false;
+                return;
             }
             i = tx;
             j = ty;
-            return true;
+            isPoint = true;
         }
 
         /**

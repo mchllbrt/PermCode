@@ -39,6 +39,7 @@ public class HereditaryUtilities {
         }
         
     };
+    
     public static HereditaryProperty merge(final HereditaryProperty a, final HereditaryProperty b) {
         return new HereditaryProperty() {
             @Override

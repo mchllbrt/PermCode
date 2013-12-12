@@ -232,7 +232,7 @@ public class PermUtilities {
      * with respect to involvement.
      *
      * @param perms the permutations
-     * @return the minimals in <code>perms</code>
+     * @return the minimal permutations in <code>perms</code>
      */
     public static Collection<Permutation> getMinimals(Collection<Permutation> perms) {
         Permutation[] sortedPermutations = perms.toArray(new Permutation[0]);

@@ -76,18 +76,20 @@ public class InvolutionUtilities {
         }
         return true;
     }
-
+    
     /**
-     * Counts the number of fixed points in a given permutation. That is, the
-     * number of times the value is equal to its position.
-     * 
-     * @param p the permutation to test
-     * @return the number of fixed points
+     * Inserts a point or pair in a (presumed) involution to form a new involution.
+     * @param p the involution
+     * @param i the position of the point
+     * @param j the value of the point
+     * @return the result of the insertion
      */
-    public static int countFixedPoints(Permutation p) {
-        int result = 0;
-        for(int i = 0; i < p.length(); i++) {
-            if (p.elements[i] == i) result++;
+    public static Permutation insert(Permutation p, int i, int j) {
+        Permutation result = p.insert(i,j);
+        if (i < j) {
+            result = result.insert(j+1, i);
+        } else if (j < i) {
+            result = result.insert(j, i+1);
         }
         return result;
     }
