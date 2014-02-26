@@ -33,7 +33,7 @@ public class Av231PlusOneGFs {
 //        System.out.println(GF.gf(a));
 //        
         HashMap<Rational, Permutation> genFs = new HashMap<>();
-        int n = 12;
+        int n = 15;
         WilfEquivalencesInAv231.generateClasses(n);
         System.out.println("Done generating");
         int count = 0;
