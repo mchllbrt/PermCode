@@ -1,67 +1,59 @@
 package permlib.utilities;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 /**
- * A class that provides an iterator for multisets of <code>k</code>
- * elements from <code>[0...(n-1)]</code>.
- * 
- * @author M Albert
+ * Iterate over multisets of size k from a collection
+ * @author Michael Albert
  */
-public class Multisets implements Iterable<int[]> {
-
-    int n;
-    int k;
-    Iterator<int[]> cs;
-
-    public Multisets(int n, int k) {
-        this.n = n;
-        this.k = k;
-        this.cs = new Combinations(n + k - 1, k).iterator(); 
+public class Multisets<T> implements Iterable<Collection<T>> {
+    
+    T[] pool;
+    final Iterator<int[]> m;
+    
+    public Multisets(Set<T> pool, int k) {
+        this.pool = (T[]) pool.toArray();
+        m = new MultisetCodes(pool.size(), k).iterator();
     }
 
     @Override
-    public Iterator<int[]> iterator() {
-        return new Iterator<int[]>() {
+    public Iterator<Collection<T>> iterator() {
+        return new Iterator<Collection<T>>() {
 
-            int[] result = new int[k];
-
-            /**
-             * Returns true if there is a next multiset in the collection.
-             */
             @Override
             public boolean hasNext() {
-                return cs.hasNext();
+                return m.hasNext();
             }
 
-            /**
-             * Returns the next multiset in the collection.
-             */
             @Override
-            public int[] next() {
-                int[] c = cs.next();
-                if (k > 0) {
-                    result[0] = c[0];
-                    for (int i = 1; i < result.length; i++) {
-                        result[i] = result[i - 1] + c[i] - c[i - 1] - 1;
-                    }
-                    return result;
-                }
-                return c;
+            public Collection<T> next() {
+                int[] code = m.next();
+                ArrayList<T> result = new ArrayList<T>();
+                for(int i : code) result.add(pool[i]);
+                return result;
             }
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException("Remove is not supported.");
+                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
             }
-        }; // End of anonymous class
-
-
+            
+        };
     }
     
     public static void main(String[] args) {
-        Multisets ms = new Multisets(4,0);
-        for(int[] m : ms) System.out.println(Arrays.toString(m));
+        Set<String> s = new HashSet<>();
+        s.add("My");
+        s.add("cat");
+        s.add("Furry");
+        for(Collection<String> c : new Multisets<>(s, 4)) {
+            for(String a : c) System.out.print(a + " ");
+            System.out.println();
+        }
     }
+
 }

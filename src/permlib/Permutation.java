@@ -326,6 +326,15 @@ public class Permutation implements Comparable<Permutation> {
         }
         return new Permutation(pVals);
     }
+
+    /**
+     * Returns the permutation obtained by deleting the element at a given position. 
+     * @param index the position
+     * @return the result of deleting the element at that position
+     */
+    public Permutation delete(int index) {
+        return PermUtilities.delete(this, index);
+    }
     
 }
 

@@ -156,6 +156,12 @@ public class PermutationClass implements PermClassInterface {
         }
     }
 
+    public void processPerms(int low, int high, PermProcessor proc) {
+        for (Permutation p : new Permutations(this, low, high)) {
+            proc.process(p);
+        }
+    }
+    
     @Override
     public Iterator<Permutation> getIterator(int low, int high) {
         return getRestrictedIterator(low, high, new Universal());

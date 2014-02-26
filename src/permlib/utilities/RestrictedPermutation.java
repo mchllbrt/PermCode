@@ -10,38 +10,38 @@ import permlib.property.PermProperty;
 /**
  * This class represents a permutation that is restricted in some way. The
  * restrictions might include certain avoidance properties (as set by a basis),
- * simplicity, or other permutation properties. Finally, there may be 
- * restrictions imposed by the user in defining certain regions where points
- * may not be added. Since the main use of this class is in static permutation
+ * simplicity, or other permutation properties. Finally, there may be
+ * restrictions imposed by the user in defining certain regions where points may
+ * not be added. Since the main use of this class is in static permutation
  * displays and a history mechanism is required there, operations which would
- * modify a restricted permutation actually return a new modified copy, that
- * is, the class is effectively immutable.
- * 
+ * modify a restricted permutation actually return a new modified copy, that is,
+ * the class is effectively immutable.
+ *
  * @author Michael Albert
  */
 public class RestrictedPermutation {
-   
+
     String basisString;
     String permString;
     Permutation p;
-    
+
     ArrayList<PermProperty> properties = new ArrayList<PermProperty>();
     boolean simple = false;
     boolean involution = false;
     HashSet<IntPair> forbiddenPairs = new HashSet<IntPair>();
     HashSet<IntPair> userForbiddenPairs = new HashSet<IntPair>();
-    
+
     public static final int NO_MONOTONE_REQUIRMENTS = 0;
     public static final int FORBIDDEN = 1;
     public static final int SINGLETON = 2;
     public static final int INCREASING = 3;
     public static final int DECREASING = 4;
-    
+
     /**
      * Constructor creates a new restricted permutation from the permutation
      * contained in <code>permString</code>, and with avoidance properties from
      * <code>basisString</code> and whether it is restricted as simple.
-     * 
+     *
      * @param basisString avoidance restrictions
      * @param permString the permutation represented
      * @param simple whether restricted to a simple permutation
@@ -53,14 +53,18 @@ public class RestrictedPermutation {
         addBasisProperties();
         this.simple = simple;
         this.involution = involution;
-        if (simple) properties.add(PermUtilities.SIMPLE);
-        if (involution) properties.add(PermUtilities.INVOLUTION);
+        if (simple) {
+            properties.add(PermUtilities.SIMPLE);
+        }
+        if (involution) {
+            properties.add(PermUtilities.INVOLUTION);
+        }
         createForbiddenPairs();
     }
-    
+
     /**
      * Returns the basis string containing avoidance restrictions.
-     * 
+     *
      * @return the basis represented as a string
      */
     public String getBasisString() {
@@ -69,7 +73,7 @@ public class RestrictedPermutation {
 
     /**
      * Returns the underlying permutation being represented as a string.
-     * 
+     *
      * @return a string containing the underlying permutation
      */
     public String getPermString() {
@@ -78,20 +82,20 @@ public class RestrictedPermutation {
 
     /**
      * Returns whether the simple restriction is in effect.
-     * 
+     *
      * @return true if the simple restriction is in effect
      */
     public boolean isSimple() {
         return simple;
     }
-    
+
     public boolean isInvolution() {
         return involution;
     }
-    
+
     /**
      * Returns the underlying permutation being represented.
-     * 
+     *
      * @return the underlying permutation
      */
     public Permutation getPerm() {
@@ -101,7 +105,7 @@ public class RestrictedPermutation {
     /**
      * Checks to see whether a given permutation satisfies the properties
      * required by this restricted permutation.
-     * 
+     *
      * @param other a permutation to test
      * @return true if the given permutation satisfies the properties of this
      * restricted permutation.
@@ -114,7 +118,7 @@ public class RestrictedPermutation {
         }
         return true;
     }
-    
+
     public boolean hasProperties() {
         return hasProperties(this.p);
     }
@@ -135,7 +139,6 @@ public class RestrictedPermutation {
 //            }
 //        }
 //    }
-    
     private void createForbiddenPairs() {
         forbiddenPairs.clear();
         for (int i = 0; i <= p.length(); i++) {
@@ -157,9 +160,9 @@ public class RestrictedPermutation {
     }
 
     /**
-     * Checks whether the given location is forbidden by the required 
+     * Checks whether the given location is forbidden by the required
      * properties.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return true if the properties forbid extension in this location.
@@ -169,8 +172,8 @@ public class RestrictedPermutation {
     }
 
     /**
-     * Checks whether the given location is forbidden by user restrictions. 
-     * 
+     * Checks whether the given location is forbidden by user restrictions.
+     *
      * @param i location reference
      * @param j location reference
      * @return true if the user restrictions forbid extension in this location.
@@ -182,7 +185,7 @@ public class RestrictedPermutation {
     /**
      * Checks whether the given location is forbidden by either the properties
      * or the user restrictions.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return true if forbidden by user restrictions or properties
@@ -190,35 +193,40 @@ public class RestrictedPermutation {
     public boolean forbids(int i, int j) {
         return userForbids(i, j) || propertiesForbid(i, j);
     }
-    
+
     /**
      * Checks the monotone requirements at a given location. The options are
      * represented as and returned with the following integer encodings,
-     * 
-     * NO_MONOTONE_REQUIRMENTS = 0
-     * FORBIDDEN = 1
-     * SINGLETON = 2
-     * INCREASING = 3
+     *
+     * NO_MONOTONE_REQUIRMENTS = 0 FORBIDDEN = 1 SINGLETON = 2 INCREASING = 3
      * DECREASING = 4
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return an integer encoding of a requirement.
      */
     public int montoneRequirements(int i, int j) {
-        if (forbids(i,j)) return FORBIDDEN;
+        if (forbids(i, j)) {
+            return FORBIDDEN;
+        }
         boolean mustIncrease = !hasProperties(PermUtilities.insert(p, i, j, new Permutation("21")));
         boolean mustDecrease = !hasProperties(PermUtilities.insert(p, i, j, new Permutation("12")));
-        if (mustIncrease && mustDecrease) return SINGLETON;
-        if (mustIncrease) return INCREASING;
-        if (mustDecrease) return DECREASING;
+        if (mustIncrease && mustDecrease) {
+            return SINGLETON;
+        }
+        if (mustIncrease) {
+            return INCREASING;
+        }
+        if (mustDecrease) {
+            return DECREASING;
+        }
         return NO_MONOTONE_REQUIRMENTS;
     }
 
     /**
      * Creates a user restriction at a given position and returns the resulting
      * restricted permutation.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return a restricted permutation with the new restriction
@@ -226,13 +234,16 @@ public class RestrictedPermutation {
     public RestrictedPermutation addUserForbiddenPair(int i, int j) {
         RestrictedPermutation result = this.copy();
         result.userForbiddenPairs.add(new IntPair(i, j));
+        if (involution && i != j) {
+            result.userForbiddenPairs.add(new IntPair(j, i));
+        }
         return result;
     }
 
     /**
      * Removes a user restriction at a given position and returns the resulting
      * restricted permutation.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return a restricted permutation with the restriction removed
@@ -240,13 +251,16 @@ public class RestrictedPermutation {
     public RestrictedPermutation removeUserForbiddenPair(int i, int j) {
         RestrictedPermutation result = this.copy();
         result.userForbiddenPairs.remove(new IntPair(i, j));
+        if (involution) {
+            result.userForbiddenPairs.remove(new IntPair(j, i));
+        }
         return result;
     }
 
     /**
-     * Replaces the element at the given position <code>i</code> by an interval 
+     * Replaces the element at the given position <code>i</code> by an interval
      * isomorphic to the permutation <code>rep</code>.
-     * 
+     *
      * @param i the position of the element to replace
      * @param rep the permutation to insert
      * @return the modified restricted permutation
@@ -270,7 +284,7 @@ public class RestrictedPermutation {
     /**
      * Inserts an interval isomorphic to the permutation <code>rep</code> at the
      * given location.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @param rep permutation to insert
@@ -282,9 +296,9 @@ public class RestrictedPermutation {
     }
 
     /**
-     * Modifies the underlying permutation this restricted permutation is based 
+     * Modifies the underlying permutation this restricted permutation is based
      * on.
-     * 
+     *
      * @param permString the new permutation
      * @return the modified restricted permutation
      */
@@ -295,7 +309,7 @@ public class RestrictedPermutation {
 
     /**
      * Updates the basis. That is, the avoidance properties.
-     * 
+     *
      * @param basisString new basis
      * @return modified restricted permutation
      */
@@ -310,7 +324,7 @@ public class RestrictedPermutation {
 
     /**
      * Sets whether the simple restriction is in effect.
-     * 
+     *
      * @param isSimple whether to have the simple restriction or not
      * @return modified restricted permutation
      */
@@ -329,7 +343,7 @@ public class RestrictedPermutation {
         result.createForbiddenPairs();
         return result;
     }
-    
+
     public RestrictedPermutation setInvolutionState(boolean isInvolution) {
         RestrictedPermutation result = this.copy();
         if (isInvolution == involution) {
@@ -348,7 +362,7 @@ public class RestrictedPermutation {
 
     /**
      * Creates a point at the given location.
-     * 
+     *
      * @param i location reference
      * @param j location reference
      * @return modified restricted permutation
@@ -374,13 +388,23 @@ public class RestrictedPermutation {
             if (left == i && bottom == j) {
                 result.userForbiddenPairs.add(new IntPair(newI + 1, newJ + 1));
             }
+        } 
+        // Try this hack for involutions
+        if (involution && i != j) {
+            result.involution = false;
+            if (i < j) {
+                result = result.addPoint(j+1, i);
+            } else {
+                result = result.addPoint(j, i+1);
+            }
+            result.involution = true;
         }
         return result;
     }
 
     /**
      * Deletes a point in the permutation at position <code>index</code>.
-     * 
+     *
      * @param index the position of the point to delete
      * @return modified restricted permutation
      */
@@ -410,11 +434,11 @@ public class RestrictedPermutation {
         }
         return result;
     }
-    
+
     /**
      * Returns a copy of the restricted permutation. Note, this performs a deep
      * copy.
-     * 
+     *
      * @return a copy of the restricted permutation
      */
     private RestrictedPermutation copy() {
@@ -443,7 +467,7 @@ public class RestrictedPermutation {
      * Checks whether newly created gaps should be marked as forbidden based on
      * user restrictions. That is, if both neighbouring positions along the
      * split are marked forbidden then so will the new space, otherwise not.
-     * 
+     *
      * @param r old row index
      * @param c old column index
      * @param i new row index
@@ -477,7 +501,7 @@ public class RestrictedPermutation {
         }
         return this.userForbids(oldCol, oldRow) && this.userForbids(oldCol, oldRow - 1) || this.userForbids(oldCol, oldRow) && this.userForbids(oldCol - 1, oldRow) || this.userForbids(oldCol + 1, oldRow) && this.userForbids(oldCol - 1, oldRow - 1) || this.userForbids(oldCol, oldRow - 1) && this.userForbids(oldCol - 1, oldRow - 1);
     }
-    
+
     @Override
     public String toString() {
         return "A restricted permutation based on " + p;

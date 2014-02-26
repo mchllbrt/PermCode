@@ -1,12 +1,12 @@
 package permlab.examples;
 
-import permlib.processor.PermCounter;
 import permlib.classes.PermutationClass;
 import permlib.PermUtilities;
 import permlib.Permutation;
 import permlib.property.PermProperty;
 import static permlib.PermUtilities.sum;
 import static permlib.PermUtilities.skewSum;
+import permlib.property.Intersection;
 import permlib.property.HereditaryProperty;
 
 /**
@@ -38,19 +38,32 @@ public class PeculiarBijections {
 
         PermutationClass a231 = new PermutationClass(p231);
         PermutationClass a132 = new PermutationClass(p132);
-        
-        for(int j = 3; j <= 8; j++) {
-            for(Permutation p : a231.getPerms(j)) {
-                HereditaryProperty ap = PermUtilities.avoidanceTest(p);
-                HereditaryProperty app = PermUtilities.avoidanceTest(P(p));
-                boolean good = true;
-                for(Permutation q : a231.getPerms(10)) {
-                    Permutation pq = P(q);
-                    good = ap.isSatisfiedBy(q) && app.isSatisfiedBy(pq) ||
-                           !ap.isSatisfiedBy(q) && !app.isSatisfiedBy(pq);
-                    if (!good) break;
+
+        for (int j = 3; j <= 8; j++) {
+            for (Permutation p1 : a231.getPerms(j)) {
+                HereditaryProperty ap1 = PermUtilities.avoidanceTest(p1);
+                HereditaryProperty app1 = PermUtilities.avoidanceTest(P(p1));
+                for (Permutation p2 : a231.getPerms(j)) {
+                    if (p2.equals(p1)) {
+                        continue;
+                    }
+                    boolean good = true;
+                    HereditaryProperty ap2 = PermUtilities.avoidanceTest(p2);
+                    HereditaryProperty app2 = PermUtilities.avoidanceTest(P(p2));
+                    PermProperty pSide = new Intersection(ap1, ap2);
+                    PermProperty PpSide = new Intersection(app1, app2);
+                    for (Permutation q : a231.getPerms(10)) {
+                        Permutation pq = P(q);
+                        good = pSide.isSatisfiedBy(q) && PpSide.isSatisfiedBy(pq)
+                                || !pSide.isSatisfiedBy(q) && !PpSide.isSatisfiedBy(pq);
+                        if (!good) {
+                            break;
+                        }
+                    }
+                    if (good) {
+                        System.out.println(p1 + "  " + p2 + " map to " + P(p1) + " " + P(p2));
+                    }
                 }
-                if (good) System.out.println(p + "  " + P(p));
             }
         }
 

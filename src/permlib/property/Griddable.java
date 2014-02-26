@@ -1,6 +1,6 @@
 package permlib.property;
 
-import permlib.utilities.Multisets;
+import permlib.utilities.MultisetCodes;
 import permlib.Permutation;
 
 /**
@@ -48,12 +48,12 @@ public final class Griddable implements PermProperty {
             return false;
         }
 
-        for (int[] rowBlockTops : new Multisets(p.length() + 1, rows - 1)) {
+        for (int[] rowBlockTops : new MultisetCodes(p.length() + 1, rows - 1)) {
             int[] rowBoundaries = new int[rows + 1];
             rowBoundaries[0] = 0;
             System.arraycopy(rowBlockTops, 0, rowBoundaries, 1, rows - 1);
             rowBoundaries[rows] = p.length();
-            for (int[] colRightSides : new Multisets(p.length() + 1, cols - 1)) {
+            for (int[] colRightSides : new MultisetCodes(p.length() + 1, cols - 1)) {
                 int[] colBoundaries = new int[cols + 1];
                 colBoundaries[0] = 0;
                 System.arraycopy(colRightSides, 0, colBoundaries, 1, cols - 1);
