@@ -29,16 +29,18 @@ public class Av231PlusStuff {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        generateClasses(10, false);
-        int[] counts = new int[11];
-        for (Permutation p : reps) {
-//            if (p.length() == 10) {
-//                System.out.println(Arrays.toString(p.elements));
-//            }
-            counts[p.length()]++;
-            if (p.length() == 8) System.out.println(p);
-        }
-        for(int i =1; i < counts.length; i++) System.out.println(counts[i]);
+        
+        System.out.println(tikzMatchingForPerm(new int[] {3, 0, 2, 1, 6, 5, 4, 7}));
+//        generateClasses(10, false);
+//        int[] counts = new int[11];
+//        for (Permutation p : reps) {
+////            if (p.length() == 10) {
+////                System.out.println(Arrays.toString(p.elements));
+////            }
+//            counts[p.length()]++;
+//            if (p.length() == 8) System.out.println(p);
+//        }
+//        for(int i =1; i < counts.length; i++) System.out.println(counts[i]);
         
 //        int nMax = 12;
 //        for (int n = 3; n <= nMax; n++) {
