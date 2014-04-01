@@ -726,4 +726,14 @@ public class PermUtilities {
         }
         return result;
     }
+
+    public static Iterable<Permutation> onePointExtensions(Permutation p) {
+        HashSet<Permutation> result = new HashSet<Permutation>();
+        for(int i = 0; i <= p.length(); i++) {
+            for(int j = 0; j <= p.length(); j++) {
+                result.add(insert(p, i, j));
+            }
+        }
+        return result;
+    }
 }

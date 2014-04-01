@@ -6,11 +6,9 @@
 package permlib.examples;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Objects;
-import static permlab.examples.Av231PlusStuff.generateClasses;
-import static permlab.examples.Av231PlusStuff.reps;
 import permlib.Permutation;
 import static permlib.examples.WilfEquivalencesInAv231.getT;
 
@@ -33,18 +31,20 @@ public class Av231PlusOneGFs {
 //        System.out.println(GF.gf(a));
 //        
         HashMap<Rational, Permutation> genFs = new HashMap<>();
-        int n = 15;
+        int n = 16;
         WilfEquivalencesInAv231.generateClasses(n);
         System.out.println("Done generating");
+        // for (Permutation p : getT(n)) System.out.println(Arrays.toString(p.delete(0).elements));
         int count = 0;
         for (Permutation p : getT(n)) {
-            Rational r = GF.gf(new Arches(p.delete(0)));
-            count++;
-            System.out.println(count);
-            if (genFs.containsKey(r)) {
-                System.out.println(p + " " + genFs.get(r) + " " + r);
-                break;
-            }
+            System.out.println(Arrays.toString(p.delete(0).elements));
+//            Rational r = GF.gf(new Arches(p.delete(0)));
+//            count++;
+//            System.out.println(count);
+//            if (genFs.containsKey(r)) {
+//                System.out.println(p + " " + genFs.get(r) + " " + r);
+//                break;
+//            }
         }
         System.out.println("All distinct");
     }

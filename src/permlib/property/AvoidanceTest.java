@@ -250,6 +250,8 @@ public class AvoidanceTest implements HereditaryProperty {
             @Override
             public boolean isSatisfiedBy(int[] values) {
 
+                if (values.length < 4) return true;
+                
                 // Protection resize, don't want to do often
                 if (values.length > largeValues.length) {
                     largeValues = new int[(values.length * 2) + 1];
