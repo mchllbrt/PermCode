@@ -27,8 +27,8 @@ public class SepPlusStuff {
     static int maxLength = 8;
 
     public static void main(String[] args) {
-        for(int n = 4; n <= 7; n++) {
-            maxLength = 2*n;
+        for(int n = 6; n <= 6; n++) {
+            maxLength = 2*n-2;
             checkSpectra(n);
         }
     }
