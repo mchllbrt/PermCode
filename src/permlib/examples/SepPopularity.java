@@ -2,8 +2,10 @@ package permlib.examples;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import permlib.PermUtilities;
 import permlib.Permutation;
+import permlib.Permutations;
 import permlib.classes.PermutationClass;
 import permlib.utilities.Combinations;
 
@@ -21,21 +23,26 @@ public class SepPopularity {
 
     public static void main(String[] args) {
         HashMap<Permutation, Counter> counts = new HashMap<Permutation, Counter>();
-        int k = 5;
-        int n = 12;
-        for (Permutation p : sep.getPerms(k)) {
+        int k = 10;
+        int n = 13;
+        for (Permutation p : new Permutations(sep, k)) {
             counts.put(p, new Counter());
         }
-        for (Permutation q : sep.getPerms(n)) {
+        for (Permutation q : new Permutations(sep, n)) {
             for (int[] c : new Combinations(n,k)) {
                 counts.get(q.patternAt(c)).increment();
             }
         }
+        HashSet<Long> cs = new HashSet<>();
+        
         for (Permutation p : counts.keySet()) {
             if (PermUtilities.isSymmetryRep(p)) {
                 System.out.println(counts.get(p).value + " " + Arrays.toString(p.elements));
+                cs.add(counts.get(p).value);
             }
         }
+        System.out.println(cs.size() + "distinct counts for " + k + " in " + n);
+        
     }
 
     static class Counter {
