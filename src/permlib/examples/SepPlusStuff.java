@@ -27,8 +27,8 @@ public class SepPlusStuff {
     static int maxLength = 8;
 
     public static void main(String[] args) {
-        for(int n = 4; n <= 7; n++) {
-            maxLength = 2*n;
+        for(int n = 8; n <= 8; n++) {
+            maxLength = 2*n-2;
             checkSpectra(n);
         }
     }
@@ -69,8 +69,9 @@ public class SepPlusStuff {
     }
 
     public static void splitBlock(HashSet<Permutation> block, int m, HashMap<Permutation, ArrayList<Long>> spectra) {
-        // System.out.println("Splitting at " + m);
+        System.out.println("Splitting a block of size " + block.size() + " at " + m);
         if (block.size() <= 1 || m > maxLength) {
+            System.out.println("Got a block at length " + m);
             return;
         }
         HashMap<Long, HashSet<Permutation>> blocks = new HashMap<>();
