@@ -27,8 +27,8 @@ public class SepPlusStuff {
     static int maxLength = 8;
 
     public static void main(String[] args) {
-        for(int n = 6; n <= 6; n++) {
-            maxLength = 2*n-2;
+        for (int n = 6; n <= 6; n++) {
+            maxLength = 2 * n - 2;
             checkSpectra(n);
         }
     }
@@ -41,14 +41,14 @@ public class SepPlusStuff {
         HashSet<Permutation> block = new HashSet<Permutation>();
         for (Permutation p : sep.getPerms(i)) {
             if (PermUtilities.isSymmetryRep(p)) {
-            block.add(p);
-            spectra.put(p, new ArrayList<Long>());
-            spectra.get(p).add(l);
+                block.add(p);
+                spectra.put(p, new ArrayList<Long>());
+                spectra.get(p).add(l);
             }
         }
         splitBlock(block, i + 1, spectra);
-         HashMap<ArrayList<Long>, HashSet<Permutation>> blocks = new HashMap<>();
-        for(Permutation p : spectra.keySet()) {
+        HashMap<ArrayList<Long>, HashSet<Permutation>> blocks = new HashMap<>();
+        for (Permutation p : spectra.keySet()) {
             ArrayList<Long> spec = spectra.get(p);
             if (blocks.containsKey(spec)) {
                 blocks.get(spec).add(p);
@@ -56,12 +56,12 @@ public class SepPlusStuff {
                 blocks.put(spec, new HashSet<Permutation>());
                 blocks.get(spec).add(p);
             }
-        
+
         }
         System.out.println(blocks.size() + " blocks at length " + i);
         for (ArrayList<Long> spec : blocks.keySet()) {
             System.out.println(spec);
-            for(Permutation p : blocks.get(spec)) {
+            for (Permutation p : blocks.get(spec)) {
                 System.out.println("  " + p);
             }
             System.out.println();
@@ -69,8 +69,9 @@ public class SepPlusStuff {
     }
 
     public static void splitBlock(HashSet<Permutation> block, int m, HashMap<Permutation, ArrayList<Long>> spectra) {
-        // System.out.println("Splitting at " + m);
+        System.out.println("Splitting a block of size " + block.size() + " at " + m);
         if (block.size() <= 1 || m > maxLength) {
+            System.out.println("Got a block at length " + m);
             return;
         }
         HashMap<Long, HashSet<Permutation>> blocks = new HashMap<>();
