@@ -27,6 +27,9 @@ import permlib.utilities.InvolutionUtilities;
  *
  * @author Michael Albert
  */
+
+// TODO (2014-04-05) Iterator seems to be broken with empty basis.
+
 public class SimplePermClass implements PermClassInterface {
 
     static final int DEFAULT_SIZE = 50;
