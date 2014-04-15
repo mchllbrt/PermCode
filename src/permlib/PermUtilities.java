@@ -535,6 +535,23 @@ public class PermUtilities {
         }
         return true;
     }
+    
+    /**
+     * Returns the symmetry representative for the given permutation.
+     * 
+     * @param p the permutation
+     * @return <code>r</code>, the lex least permutation in the symmetry class
+     * of <code>p</code>
+     */
+    public static Permutation symmetryRep(Permutation p) {
+        Permutation r = p;
+        for (Symmetry s : Symmetry.values()) {
+            if (s.on(p).compareTo(r) < 0) {
+                r = s.on(p);
+            }
+        }
+        return r;
+    }
 
     /**
      * Computes the set of common subpermutations of a collection of permutations.
