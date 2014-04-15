@@ -72,14 +72,16 @@ public class PermutationClass implements PermClassInterface {
     }
     
     public String toString() {
-        String s = "Av(";
-        s += this.basis[0];
-        for (int i = 1; i < this.basis.length; i++) {
-            s += ", ";
-            s += this.basis[i];
+        StringBuilder s = new StringBuilder();
+        s.append("Av(");
+        for(Permutation p : basis) {
+            s.append(p);
+            s.append(", ");
         }
-        s += ");";
-        return s;
+        s.deleteCharAt(s.length()-1);
+        s.append(")");
+        
+        return s.toString();
     }
 
     protected void setupMasks() {
