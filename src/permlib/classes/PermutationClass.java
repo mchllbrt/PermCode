@@ -70,6 +70,17 @@ public class PermutationClass implements PermClassInterface {
     public PermClassInterface clone() {
         return new PermutationClass(basis);
     }
+    
+    public String toString() {
+        String s = "Av(";
+        s += this.basis[0];
+        for (int i = 1; i < this.basis.length; i++) {
+            s += ", ";
+            s += this.basis[i];
+        }
+        s += ");";
+        return s;
+    }
 
     protected void setupMasks() {
         RIGHT_MASK = new long[64];
