@@ -67,10 +67,13 @@ public class PermutationClass implements PermClassInterface {
     public PermutationClass() {
     }
 
-    public PermClassInterface clone() {
+    @Override
+    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
+    public PermClassInterface clone()  {
         return new PermutationClass(basis);
     }
     
+    @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
         s.append("Av(");
@@ -84,7 +87,7 @@ public class PermutationClass implements PermClassInterface {
         return s.toString();
     }
 
-    protected void setupMasks() {
+    protected final void setupMasks() {
         RIGHT_MASK = new long[64];
         LEFT_MASK = new long[64];
         RIGHT_MASK[0] = 1L;
@@ -97,12 +100,12 @@ public class PermutationClass implements PermClassInterface {
     }
 
     @SuppressWarnings("unchecked")
-    protected void computeStoredPermutations() {
+    protected final void computeStoredPermutations() {
         storedPermutations = (HashSet<Permutation>[]) new HashSet[MAXIMUM_STORED_LENGTH + 1];
-        storedPermutations[0] = new HashSet<Permutation>();
+        storedPermutations[0] = new HashSet<>();
         storedPermutations[0].add(new Permutation(""));
         for (int n = 1; n <= MAXIMUM_STORED_LENGTH; n++) {
-            storedPermutations[n] = new HashSet<Permutation>();
+            storedPermutations[n] = new HashSet<>();
             for (Permutation p : storedPermutations[n - 1]) {
                 for (Permutation q : rightExtensions(p)) {
                     if (containsPermutation(q)) {
@@ -199,7 +202,7 @@ public class PermutationClass implements PermClassInterface {
         int low;
         int high;
         PermProperty restrictingProperty;
-        Queue<Iterator<Permutation>> iterators = new ArrayDeque<Iterator<Permutation>>();
+        Queue<Iterator<Permutation>> iterators = new ArrayDeque<>();
         Iterator<Permutation> currentIterator;
         boolean safeIterator = false;
 
@@ -262,14 +265,14 @@ public class PermutationClass implements PermClassInterface {
             Permutation stackNext = null;
 
             public StackIterator() {
-                stack = new ArrayDeque<InsertionPerm>();
+                stack = new ArrayDeque<>();
                 for (Permutation p : storedPermutations[MAXIMUM_STORED_LENGTH]) {
                     stack.add(new InsertionPerm(p));
                 }
             }
 
             private Collection<InsertionPerm> children(InsertionPerm p) {
-                ArrayList<InsertionPerm> children = new ArrayList<InsertionPerm>();
+                ArrayList<InsertionPerm> children = new ArrayList<>();
                 Permutation seed = p.perm;
                 long insertionOptions = p.insertions;
                 // Generate the children
