@@ -78,7 +78,7 @@ public class PermutationClass implements PermClassInterface {
             s.append(p);
             s.append(", ");
         }
-        s.deleteCharAt(s.length()-1);
+        s.delete(s.length()-2, s.length());
         s.append(")");
         
         return s.toString();
