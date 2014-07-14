@@ -1,7 +1,7 @@
 package permlib;
 
 /**
- * Static method for computing standard (and not so standard) statistics for
+ * Static methods for computing standard (and not so standard) statistics for
  * permutations.
  *
  * @author Michael Albert
@@ -65,6 +65,46 @@ public class PermStatistics {
             result += (p.elements[i] > i) ? 1 : 0;
         }
         return result;
+    }
+    
+    /**
+     * Computes the number of cycles of a given permutation.
+     * 
+     * @param p the permutation
+     * @return the number of cycles of <code>p</code>
+     */
+    public static int cycles(Permutation p) {
+        int c = 0;
+        boolean[] b = new boolean[p.length()];
+        for(int i = 0; i < p.length(); i++) {
+            if (!b[i]) {
+                c++;
+                b[i] = true;
+                int j = p.elements[i];
+                while (j != i) {
+                    b[j] = true;
+                    j = p.elements[j];
+                }
+            }
+        }
+        return c;
+    }
+    
+    /**
+     * Computes the depth (Petersen, Tenner) of a permutation which is the sum
+     * over excedances of the amount of the excedance.
+     * 
+     * @param p the permutation
+     * @return the depth of <code>p</code>
+     */
+    public static int depth(Permutation p) {
+        int d = 0;
+        for(int i = 0; i < p.length(); i++) {
+            if (p.elements[i] > i) {
+                d += p.elements[i]-i;
+            }
+        }
+        return d;
     }
 
 }

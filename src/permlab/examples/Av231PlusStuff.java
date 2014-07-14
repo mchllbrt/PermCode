@@ -30,7 +30,7 @@ public class Av231PlusStuff {
      */
     public static void main(String[] args) {
         
-        System.out.println(tikzMatchingForPerm(new int[] {3, 0, 2, 1, 6, 5, 4, 7}));
+        System.out.println(tikzMatchingForPerm(new int[] {3,1,0,2,7,4,6,5}));
 //        generateClasses(10, false);
 //        int[] counts = new int[11];
 //        for (Permutation p : reps) {
