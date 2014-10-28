@@ -388,6 +388,26 @@ public class PermUtilities {
         }
         return result;
     }
+    
+    public static int LISLength(Permutation p) {
+        ArrayList<Integer> row = new ArrayList<>();
+        for(int v : p.elements) {
+            int i = 0;
+            while (i < row.size() && v > row.get(i)) {
+                i++;
+            }
+            if (i < row.size()) {
+                row.set(i, v);
+            } else {
+                row.add(v);
+            }
+         }
+        return row.size();
+    }
+    
+    public static int LDSLength(Permutation p) {
+        return LISLength(p.reverse());
+    }
 
     private static void RSKBump(ArrayList<ArrayList<Integer>> tableau, int valueToInsert) {
         int rowIndex = 0;

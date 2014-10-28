@@ -1,5 +1,6 @@
 package permlib.property;
 
+import java.util.Arrays;
 import permlib.utilities.MultisetCodes;
 import permlib.Permutation;
 
@@ -41,6 +42,9 @@ public final class Griddable implements PermProperty {
 
     @Override
     public final boolean isSatisfiedBy(Permutation p) {
+        return isSatisfiedBy(p, false);
+    }
+    public final boolean isSatisfiedBy(Permutation p, boolean verbose) {
         if (p.length() == 0) {
             return true;
         }
@@ -67,6 +71,10 @@ public final class Griddable implements PermProperty {
                     }
                 }
                 if (good) {
+                    if (verbose) {
+                        System.out.println("Col boundaries " + Arrays.toString(colBoundaries));
+                        System.out.println("Row boundaries " + Arrays.toString(rowBoundaries));
+                    }
                     return true;
                 }
             }
