@@ -40,7 +40,7 @@ public class UniversalSeparable {
                     if (containsAll) {
                         found = true;
                         System.out.println(p);
-                        break;
+                        // break;
                     }
                 }
                 n++;
