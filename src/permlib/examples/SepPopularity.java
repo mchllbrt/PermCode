@@ -24,14 +24,12 @@ public class SepPopularity {
     static final Permutation p25314 = new Permutation("25314");
     static final Permutation p246135 = new Permutation("246135");
     static final Permutation p362514 = new Permutation("362514");
-    static final PermutationClass x = new PermutationClass(p2413);
-
+    static final PermutationClass x = new PermutationClass(new Permutation("1324"), new Permutation("4231"));
+    
     public static void main(String[] args) {
-        doIt3(2, 7, 13,
+        doIt3(7, 7, 12,
                 new PermutationClass(
-                        new Permutation("321"),
-                        p3142,
-                        p2413
+                        new Permutation("1324"), new Permutation("4231")
                 )
         );
     }

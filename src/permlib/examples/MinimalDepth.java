@@ -20,7 +20,7 @@ public class MinimalDepth {
         PermutationClass c = new PermutationClass(new Permutation("4231"));
         Collection<Permutation> basis = new HashSet<>();
         basis.add(new Permutation("4231"));
-        for (int n = 4; n <= 13; n++) {
+        for (int n = 4; n <= 16; n++) {
             PermutationClass d = new PermutationClass(basis);
             System.out.println("Testing " + n);
             for (Permutation p : new Permutations(c, n)) {
