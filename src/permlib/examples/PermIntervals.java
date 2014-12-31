@@ -1,12 +1,14 @@
 package permlib.examples;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import permlib.Permutation;
 import permlib.Permutations;
 import permlib.classes.PermutationClass;
 import permlib.processor.PermCounter;
 import permlib.processor.PermProcessor;
 import permlib.property.PermProperty;
+import permlib.utilities.IntPair;
 
 /**
  * Look at subclasses of Av231 avoiding another permutation as an interval.
@@ -17,16 +19,7 @@ public class PermIntervals {
 
     public static void main(String[] args) {
 
-        PermutationClass c = new PermutationClass(new Permutation("231"));
-        // doClass(c, 3, 6);
-        // doPair(new Permutation("3 2 1"), new Permutation("3 1 2"), 10);
-       doCounts(3);
-       NoIntervalProperty nop = new NoIntervalProperty(new Permutation("321"));
-       for(Permutation p : new Permutations(new PermutationClass("231"),5)) {
-           if (!nop.isSatisfiedBy(p)) System.out.println(p);
-       }
-        
-        
+        doCounts(7,13);
 
     }
 
@@ -44,7 +37,7 @@ public class PermIntervals {
         }
         System.out.println();
     }
-    
+
     public static void doPair(Permutation p, Permutation q, int k) {
         PermutationClass c = new PermutationClass("231");
         NoIntervalProperty nop = new NoIntervalProperty(p);
@@ -60,6 +53,31 @@ public class PermIntervals {
                 counterq.process(per);
             }
             System.out.println(counterp.getCount() + " " + counterq.getCount());
+        }
+    }
+
+    public static void doJointPair(Permutation p, Permutation q, int k) {
+        PermutationClass c = new PermutationClass("231");
+        IntervalCounter pInt = new IntervalCounter(p);
+        IntervalCounter qInt = new IntervalCounter(q);
+        for (int n = p.length() + 1; n <= p.length() + k; n++) {
+            HashMap<IntPair, Integer> counts = new HashMap<>();
+            for (Permutation r : new Permutations(c, n)) {
+                pInt.reset();
+                qInt.reset();
+                IntPair pair = new IntPair(pInt.getCount(r), qInt.getCount(r));
+                if (!counts.containsKey(pair)) {
+                    counts.put(pair, 0);
+                    counts.put(new IntPair(qInt.getCount(r), pInt.getCount(r)), 0);
+                }
+                counts.put(pair, counts.get(pair) + 1);
+            }
+            for (IntPair pair : counts.keySet()) {
+                if (!counts.get(pair).equals(counts.get(pair.reverse()))) {
+                    System.out.println(p + " " + q + " " + n);
+                    return;
+                }
+            }
         }
     }
 
@@ -92,6 +110,32 @@ public class PermIntervals {
                 System.out.println(Arrays.toString(counts));
             }
             System.out.println();
+        }
+    }
+
+    private static void doCounts(int k, int n) {
+        PermutationClass c = new PermutationClass("231");
+        HashMap<Permutation, int[]> counts = new HashMap<>();
+        for (Permutation p : new Permutations(c, k)) {
+            // System.out.println(p);
+            IntervalCounter counter = new IntervalCounter(p);
+            int[] pCounts = new int[n - k + 2];
+            for (Permutation q : new Permutations(c, n)) {
+                pCounts[counter.getCount(q)]++;
+            }
+            counts.put(p, pCounts);
+        }
+        for (Permutation p : counts.keySet()) {
+            System.out.println(p + " " + Arrays.toString(counts.get(p)));
+        }
+        for (Permutation p : counts.keySet()) {
+            int[] pc = counts.get(p);
+            for (Permutation q : counts.keySet()) {
+                int[] pq = counts.get(q);
+                if (!p.equals(q) && pc[0] == pq[0] && !Arrays.equals(pc, pq)) {
+                    System.out.println("Counterexample: " + p + " " + q);
+                }
+            }
         }
     }
 

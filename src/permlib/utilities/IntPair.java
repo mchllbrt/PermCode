@@ -59,6 +59,10 @@ public class IntPair implements Comparable<IntPair> {
         return this.second - other.second;
     }
     
+    public IntPair reverse() {
+            return new IntPair(second, first);
+    }
+    
     public String toString() {
         return "(" + first + ", " + second + ")";
     }
