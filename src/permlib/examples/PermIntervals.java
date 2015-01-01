@@ -19,7 +19,9 @@ public class PermIntervals {
 
     public static void main(String[] args) {
 
-        doCounts(7,13);
+        // 142365 and 213456
+        doJointPair(new Permutation("142365"), new Permutation("213456"), 8);
+        // doWilfImpliesJoint(5,7);
 
     }
 
@@ -37,7 +39,42 @@ public class PermIntervals {
         }
         System.out.println();
     }
+    
+    public static long[] permSpec(Permutation p, int k) {
+        long[] result = new long[k];
+        PermutationClass c = new PermutationClass("231");
+        NoIntervalProperty nop = new NoIntervalProperty(p);
+        PermCounter counter = new PermCounter(nop);
+        for (int n = p.length() + 1; n <= p.length() + k; n++) {
+            counter.reset();
+            for (Permutation q : new Permutations(c, n)) {
+                counter.process(q);
+            }
+            result[n-p.length()-1] = counter.getCount();
+        }
+        return result;
+    }
 
+    public static HashMap<Permutation, long[]> permSpecs(int n, int k) {
+        HashMap<Permutation, long[]>  result = new HashMap<>();
+        PermutationClass c = new PermutationClass("231");
+        for(Permutation p : new Permutations(c,n)) {
+            result.put(p, permSpec(p,k));
+        }
+        return result;
+    }
+    
+    public static void doWilfImpliesJoint(int n, int k) {
+        HashMap<Permutation, long[]>  specs = permSpecs(n,k);
+        for(Permutation p : specs.keySet()) {
+            for(Permutation q : specs.keySet()) {
+                if (!p.equals(q) && Arrays.equals(specs.get(p), specs.get(q))) {
+                    doJointPair(p,q,k);
+                }
+            }
+        }
+        
+    }
     public static void doPair(Permutation p, Permutation q, int k) {
         PermutationClass c = new PermutationClass("231");
         NoIntervalProperty nop = new NoIntervalProperty(p);
@@ -61,6 +98,7 @@ public class PermIntervals {
         IntervalCounter pInt = new IntervalCounter(p);
         IntervalCounter qInt = new IntervalCounter(q);
         for (int n = p.length() + 1; n <= p.length() + k; n++) {
+            // System.out.println("In length " + n);
             HashMap<IntPair, Integer> counts = new HashMap<>();
             for (Permutation r : new Permutations(c, n)) {
                 pInt.reset();
@@ -73,6 +111,7 @@ public class PermIntervals {
                 counts.put(pair, counts.get(pair) + 1);
             }
             for (IntPair pair : counts.keySet()) {
+                // System.out.println(pair + " " + counts.get(pair) + " " + counts.get(pair.reverse()));
                 if (!counts.get(pair).equals(counts.get(pair.reverse()))) {
                     System.out.println(p + " " + q + " " + n);
                     return;
@@ -111,6 +150,20 @@ public class PermIntervals {
             }
             System.out.println();
         }
+    }
+
+    private static void doCounts(Permutation p, int k) {
+        PermutationClass c = new PermutationClass("231");
+        System.out.println(p);
+        IntervalCounter counter = new IntervalCounter(p);
+        for (int n = p.length()+1; n <= p.length() + k; n++) {
+            int[] counts = new int[n - p.length() + 2];
+            for (Permutation q : new Permutations(c, n)) {
+                counts[counter.getCount(q)]++;
+            }
+            System.out.println(Arrays.toString(counts));
+        }
+        System.out.println();
     }
 
     private static void doCounts(int k, int n) {
