@@ -12,7 +12,10 @@ import java.util.HashSet;
 import permlib.PermUtilities;
 import permlib.Permutation;
 import permlib.classes.SimplePermClass;
+import permlib.property.AvoidanceTest;
+import permlib.property.HereditaryProperty;
 import permlib.property.Simple;
+import permlib.utilities.IntPair;
 
 /**
  *
@@ -23,24 +26,44 @@ public class SimplesInAv2134AndAv1234 {
     public static void main(String[] args) {
         SimplePermClass s2134 = new SimplePermClass(new Permutation("2134"));
         SimplePermClass s1234 = new SimplePermClass(new Permutation("1234"));
+        HereditaryProperty a213 = AvoidanceTest.getTest("213");
+        HereditaryProperty a123 = AvoidanceTest.getTest("123");
+        HashMap<Permutation, ArrayList<ArrayList<IntPair>>> d2134 = dataForClass(s2134, 8);
+        for (Permutation p : d2134.keySet()) {
+            if (!a123.isSatisfiedBy(p) && p.length() == 4) {
+                System.out.println(p);
+                for (ArrayList<IntPair> mp : d2134.get(p)) {
+                    System.out.println(" " + asString(mp));
+                }
+            }
+        }
+        System.out.println("--------------------------");
+        HashMap<Permutation, ArrayList<ArrayList<IntPair>>> d1234 = dataForClass(s1234, 8);
+        for (Permutation p : d1234.keySet()) {
+            if (!a213.isSatisfiedBy(p) && p.length() == 4) {
+                System.out.println(p);
+                for (ArrayList<IntPair> mp : d1234.get(p)) {
+                    System.out.println(" " + asString(mp));
+                }
+            }
+        }
+       // doBoth(10);
 //        int n = 8;
 //        doMinPos(s2134, n);
 //        System.out.println();
 //        doMinPos(s1234, n);
         // doHasCat(n);
-        
+
         // doBoth(n);
 //        findPerms(s1234, ".9..86..53");
 //        System.out.println();
 //        findPerms(s2134, ".9..86..53");
-        
 //        Permutation p = new Permutation("2 4 8 10 12 5 14 6 13 7 11 1 9 3");
 //        System.out.println(asString(p, rightLeftMaxPos(p)));
 //        
 //        findPerms(s1234, "......13.12.10.82");
 //        System.out.println();
 //        findPerms(s2134, "......13.12.10.82");
-        
 //        int n = 9;
 //        Simple s = new Simple();
 //        HashSet<Permutation> all1234 = s1234.getPerms(n);
@@ -48,12 +71,12 @@ public class SimplesInAv2134AndAv1234 {
 //            Permutation q = doMap(p);
 //            if (!all1234.contains(q)) System.out.println(p + " " +  q);          
 //        }
-        
-        Permutation p = new Permutation("713948526");
-        System.out.println(asString(p, rightLeftMaxPos(p)));
-        findPerms(s1234, "...8.7..5");
-        System.out.println();
-        findPerms(s2134, "...8.7..5");
+        // 248579316
+//        Permutation p = new Permutation("813649572");
+        // System.out.println(asString(p, rightLeftMaxPos(p)));
+//        findPerms(s1234, "...9.7.5.3");
+//        System.out.println();
+//        findPerms(s2134, "...9.7.5.3");
     }
 
     public static void doClass(SimplePermClass cl, int n) {
@@ -169,7 +192,57 @@ public class SimplesInAv2134AndAv1234 {
             }
         }
         return maxPos;
+    }
 
+    public static ArrayList<IntPair> rightLeftMaxPositionsAndValues(Permutation q) {
+        boolean[] pos = rightLeftMaxPos(q);
+        ArrayList<IntPair> result = new ArrayList<>();
+        result.add(new IntPair(-1, q.length()));
+        for (int i = 0; i < pos.length; i++) {
+            if (pos[i]) {
+                result.add(new IntPair(i, q.at(i)));
+            }
+        }
+        return result;
+    }
+
+    public static String asString(ArrayList<IntPair> rlm) {
+        int n = rlm.get(0).getSecond();
+        StringBuilder result = new StringBuilder();
+        int i = 0;
+        for (IntPair pair : rlm) {
+            while (i < pair.getFirst()) {
+                result.append('.');
+                i++;
+            }
+            if (pair.getFirst() >= 0) {
+                result.append(pair.getFirst());
+                i++;
+            }
+        }
+        return result.toString();
+
+    }
+
+    public static HashMap<Permutation, ArrayList<ArrayList<IntPair>>> dataForClass(SimplePermClass s, int n) {
+        HashMap<Permutation, ArrayList<ArrayList<IntPair>>> result = new HashMap<>();
+        for (Permutation q : s.getPermsTo(n)) {
+            Permutation lowq = nonRLMaxPattern(q);
+            ArrayList<IntPair> highq = rightLeftMaxPositionsAndValues(q);
+            if (!result.containsKey(lowq)) {
+                result.put(lowq, new ArrayList<ArrayList<IntPair>>());
+            }
+            result.get(lowq).add(highq);
+        }
+        return result;
+    }
+
+    public static Permutation nonRLMaxPattern(Permutation q) {
+        boolean[] pos = rightLeftMaxPos(q);
+        for (int i = 0; i < pos.length; i++) {
+            pos[i] = !pos[i];
+        }
+        return PermUtilities.selectByPosition(q, pos);
     }
 
     public static boolean[] leftRightMinPos(Permutation q) {
@@ -341,53 +414,61 @@ public class SimplesInAv2134AndAv1234 {
             }
         }
     }
-    
+
     private static boolean boundaryPoint(Permutation p, int index) {
-        
-        Permutation q = p.window(index+1, p.length(), p.elements[index]+1, p.length());
+
+        Permutation q = p.window(index + 1, p.length(), p.elements[index] + 1, p.length());
         return (q.length() > 0) && decreasing(q);
-        
+
     }
 
     private static Integer[] boundaryPoints(Permutation p) {
         ArrayList<Integer> bps = new ArrayList<>();
-        for(int i = 0; i < p.length(); i++) {
-            if (boundaryPoint(p, i)) bps.add(i);
+        for (int i = 0; i < p.length(); i++) {
+            if (boundaryPoint(p, i)) {
+                bps.add(i);
+            }
         }
         return bps.toArray(new Integer[0]);
     }
-    
+
     private static Integer[] lowPoints(Permutation p) {
         Integer[] bps = boundaryPoints(p);
         ArrayList<Integer> lps = new ArrayList<>();
-        for(int i = 0; i < p.length(); i++) {
-            if (lowPoint(p, bps, i)) lps.add(i);
+        for (int i = 0; i < p.length(); i++) {
+            if (lowPoint(p, bps, i)) {
+                lps.add(i);
+            }
         }
         return lps.toArray(new Integer[0]);
-        
+
     }
 
     private static boolean lowPoint(Permutation p, Integer[] bps, int i) {
         int j = 0;
-        while (j < bps.length && i > bps[j]) j++;
-        if (j == bps.length) return false;
+        while (j < bps.length && i > bps[j]) {
+            j++;
+        }
+        if (j == bps.length) {
+            return false;
+        }
         return p.elements[i] < p.elements[bps[j]];
     }
-    
+
     private static Permutation doMap(Permutation p) {
         Integer[] lps = lowPoints(p);
         int[] elements = Arrays.copyOf(p.elements, p.elements.length);
         int[] lpv = new int[lps.length];
-        for(int i = 0; i < lpv.length; i++) {
+        for (int i = 0; i < lpv.length; i++) {
             lpv[i] = p.elements[lps[i]];
         }
         Arrays.sort(lpv);
-        int j = lpv.length-1;
-        for(int i = 0; i < lps.length; i++) {
+        int j = lpv.length - 1;
+        for (int i = 0; i < lps.length; i++) {
             elements[lps[i]] = lpv[j];
             j--;
         }
-        
+
         return new Permutation(elements);
     }
 }

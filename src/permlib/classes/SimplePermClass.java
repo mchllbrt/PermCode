@@ -199,7 +199,7 @@ public class SimplePermClass implements PermClassInterface {
     public Collection<Permutation> getPermsTo(int length) {
         PermCollector collector = new PermCollector();
         for (int i = 4; i <= length; i++) {
-            processPerms(length, collector);
+            processPerms(i, collector);
         }
         return collector.getCollection();
     }
