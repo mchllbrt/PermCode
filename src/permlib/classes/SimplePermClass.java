@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 import permlib.Permutation;
 import permlib.property.Intersection;
 import static permlib.PermUtilities.*;
+import permlib.Permutations;
 import permlib.processor.PermCollector;
 import permlib.processor.PermProcessor;
 import permlib.property.HereditaryProperty;
@@ -550,6 +551,7 @@ public class SimplePermClass implements PermClassInterface {
     public static void main(String[] args) {
         SimplePermClass c = new SimplePermClass("123");
         System.out.println(c.getPerms(6).size());
+        for(Permutation p : new Permutations(c, 6)) System.out.println(p); // Iterator is broken
 //        InterruptiblePermClassInterface ic;
 //        ic = new INT_SimplePermClass(c, null);
 //        System.out.println(ic.getPerms(6).size());

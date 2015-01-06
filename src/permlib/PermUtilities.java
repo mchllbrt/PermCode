@@ -773,4 +773,17 @@ public class PermUtilities {
         }
         return result;
     }
+
+    public static Permutation selectByPosition(Permutation q, boolean[] toKeep) {
+        int c = 0;
+        for(int i = 0; i < toKeep.length; i++) {
+            if (toKeep[i]) c++;
+        }
+        int[] elements = new int[c];
+        int index = 0;
+        for(int j = 0; j < q.length(); j++) {
+            if (toKeep[j]) elements[index++] = q.elements[j];
+        }
+        return new Permutation(elements);
+    }
 }
