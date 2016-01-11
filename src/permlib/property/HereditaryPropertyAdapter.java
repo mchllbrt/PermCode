@@ -58,15 +58,10 @@ public abstract class HereditaryPropertyAdapter implements HereditaryProperty {
             return partialBasis;
         }
         
-        Collection<PermProperty> involvementProperties = new ArrayList<PermProperty>();
-        for (Permutation p : partialBasis) {
-            involvementProperties.add(new Involves(p));
-        }
-        PermProperty involveBasis = PermPropertyUtilities.union(involvementProperties);
-        for (int k = basisLengthKnown + 1; k <= n; k++) {
+         for (int k = basisLengthKnown + 1; k <= n; k++) {
             PermutationClass c = new PermutationClass(partialBasis);
             for (Permutation p : new Permutations(c, k)) {
-                if (!involveBasis.isSatisfiedBy(p)) {
+                if (!this.isSatisfiedBy(p)) {
                     partialBasis.add(p);
                 }
             }

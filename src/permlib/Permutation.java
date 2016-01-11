@@ -119,6 +119,13 @@ public class Permutation implements Comparable<Permutation> {
         elements = new int[values.length];
         fillElementsFrom(values, 0, elements.length);
     }
+    
+    public Permutation(Integer[] values) {
+        int[] v = new int[values.length];
+        elements = new int[values.length];
+        for(int i = 0; i < v.length; i++) v[i] = values[i];
+        fillElementsFrom(v, 0, v.length);
+    }
 
     /**
      * Creates a clone, i.e. copy of this permutation.
@@ -127,9 +134,7 @@ public class Permutation implements Comparable<Permutation> {
      */
     @Override
     public Permutation clone() {
-        Permutation result = new Permutation(elements.length);
-        System.arraycopy(this.elements, 0, result.elements, 0, elements.length);
-        return result;
+        return new Permutation(this.elements, 0, this.elements.length);
     }
 
     /**

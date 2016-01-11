@@ -7,8 +7,8 @@ import permlib.property.PermProperty;
 
 /**
  * This class represents abstractly the collection of all permutations of some
- * given lengths, possibly lying in a given class, and/or with certain properties
- * and allows iteration over this collection without needing to. The main 
+ * given lengths, possibly lying in a given class, and/or with certain properties.
+ * The main 
  * reason for doing this is to provide an
  * iterator over all permutations of those lengths so that code such as: <p>
  * <code> for(Permutation p : new Permutations(3,10)) {...}</code> <p> can be

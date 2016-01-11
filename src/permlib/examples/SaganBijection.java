@@ -20,11 +20,12 @@ public class SaganBijection {
 
     public static void main(String[] args) {
         checkDescendingTrees();
+        // checkDesDistribution();
     }
     
     private static void checkDescendingTrees() {
         int k = 1;
-        int m = 2;
+        int m = 1;
         int maxN = 12;
         int[] p = new int[k+m+1];
         int[] q = new int[k+m+1];
