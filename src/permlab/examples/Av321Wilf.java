@@ -18,7 +18,7 @@ public class Av321Wilf {
 
     public static void main(String[] args) {
 
-        doWilf(6, 6, true, 9);
+        doWilf(6,6, true, 9);
         // doDiff(8, 9, 14);
     }
 

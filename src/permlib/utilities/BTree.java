@@ -1,5 +1,7 @@
 package permlib.utilities;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Objects;
 import permlib.Permutation;
 
@@ -12,10 +14,12 @@ public class BTree {
 
     private BTree left;
     private BTree right;
+    private int size;
 
     public BTree(BTree left, BTree right) {
-        this.left = left;
-        this.right = right;
+        this.size = 1; // For the root
+        this.setLeft(left);
+        this.setRight(right);
     }
 
     public BTree() {
@@ -27,7 +31,9 @@ public class BTree {
     }
 
     public void setLeft(BTree left) {
+        this.size -= getSize(this.left);
         this.left = left;
+        this.size += getSize(this.left);
     }
 
     public BTree getRight() {
@@ -35,7 +41,32 @@ public class BTree {
     }
 
     public void setRight(BTree right) {
+        this.size -= getSize(this.right);
         this.right = right;
+        this.size += getSize(this.right);
+    }
+
+    public static int getSize(BTree t) {
+        if (t == null) {
+            return 0;
+        }
+        return t.size;
+    }
+
+    public static StringBuffer dyckStringBuffer(BTree t) {
+        StringBuffer result = new StringBuffer();
+        dyckStringBuffer(t, result);
+        return result;
+    }
+
+    public static void dyckStringBuffer(BTree t, StringBuffer result) {
+        if (t == null) {
+            return;
+        }
+        result.append('1');
+        dyckStringBuffer(t.left, result);
+        result.append('0');
+        dyckStringBuffer(t.right, result);
     }
 
     @Override
@@ -107,7 +138,14 @@ public class BTree {
     public static void main(String[] args) {
         Permutation[] ps = {new Permutation("123"), new Permutation("321"), new Permutation("132"), new Permutation("2413")};
         for (Permutation p : ps) {
+            BTree t = descendingTree(p);
+            System.out.println(p);
             System.out.println(descendingTree(p));
+            System.out.println(dyckStringBuffer(t));
         }
+    }
+
+    public int getSize() {
+        return size;
     }
 }
