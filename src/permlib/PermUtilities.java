@@ -73,7 +73,7 @@ public class PermUtilities {
         }
 
         if (n == 4) {
-            return new Permutation[]{new Permutation("2413"), new Permutation("3142")};
+            return new Permutation[]{new Permutation("3142"), new Permutation("2413")};
         }
 
         Permutation[] result = new Permutation[4];
