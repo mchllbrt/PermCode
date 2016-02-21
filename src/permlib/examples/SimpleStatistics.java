@@ -17,29 +17,28 @@ import permlib.property.HereditaryProperty;
 public class SimpleStatistics {
 
      public static void main(String[] args) {
-        exceptionalStats(8);
+        for(int n = 4; n <= 12; n++) exceptionalStats(n);
     }
     
     public static void exceptionalStats(int n) {
         
         SimplePermClass s = new SimplePermClass();
         final HereditaryProperty[] avEx = new HereditaryProperty[n/2-1];
-        final int[] avoidCounts = new int[avEx.length];
+        final int[] avoidCounts = new int[avEx.length+1];
         for(int i = 0; i < avEx.length; i++) {
             avEx[i] = AvoidanceTest.getTest(PermUtilities.exceptionalSimples(2*i+4)[0]);
-            System.out.println(PermUtilities.exceptionalSimples(2*i+4)[0]);
+            //System.out.println(PermUtilities.exceptionalSimples(2*i+4)[0]);
         }
         
         PermProcessor proc = new PermProcessor() {
 
             @Override
             public void process(Permutation p) {
-                for(int i = 0; i < avEx.length; i++) {
-                    if (avEx[i].isSatisfiedBy(p)) {
-                        avoidCounts[i]++;
-                        break;
-                    }
+                int i = 0;
+                for(i = 0; i < avEx.length && !avEx[i].isSatisfiedBy(p); i++) {
+                    
                 }
+                avoidCounts[i]++;
             }
 
             @Override
@@ -61,5 +60,10 @@ public class SimpleStatistics {
         s.processPerms(n, proc);
         System.out.println(Arrays.toString(avoidCounts));
        
+    }
+    
+    public static void skeletonAfterReversals(int length, int reversals) {
+        
+        
     }
 }

@@ -786,4 +786,29 @@ public class PermUtilities {
         }
         return new Permutation(elements);
     }
+    
+    public static Permutation skeleton(Permutation p) {
+        int[] mins = Arrays.copyOf(p.elements, p.elements.length);
+        int[] maxs = Arrays.copyOf(p.elements, p.elements.length);
+        int[] iLengths = new int[p.elements.length];
+        for(int i = 1; i < p.elements.length-1; i++) {
+            for(int j = p.elements.length-1; j >= i; j--) {
+                mins[j] = Math.min(mins[j-1], p.elements[j]);
+                maxs[j] = Math.max(maxs[j-1], p.elements[j]);
+                if (maxs[j] - mins[j] == i) iLengths[j-i] = i;
+            }    
+        }
+        ArrayList<Integer> vs = new ArrayList<Integer>();
+        int i = 0;
+        while (i < p.elements.length) {
+            vs.add(p.elements[i]);
+            i += iLengths[i]+1;
+        }
+        int[] result = new int[vs.size()];
+        i = 0;
+        for(int v : vs) result[i++] = v;
+        return new Permutation(result);
+    }
+    
+    
 }
