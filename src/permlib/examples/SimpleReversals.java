@@ -1,9 +1,12 @@
 package permlib.examples;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 import permlib.PermUtilities;
 import permlib.Permutation;
+import permlib.classes.SimplePermClass;
 
 /**
  * What is the length of the skeleton when we reverse the identity randomly until
@@ -14,19 +17,34 @@ import permlib.Permutation;
 public class SimpleReversals {
 
     static Random R = new Random();
+    static HashMap<Permutation, Integer> counts = new HashMap<>();
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        int n = 1000;
-        int trials = 10000;
+        doMany();
+    }
+    
+    public static void doMany() {
+        counts.clear();
+        int n = 30;
+        int trials = 1000000;
         int[] lengths = new int[n+1];
         for (int i = 0; i < trials; i++) {
             doOne(n, lengths);
             
         }
-        System.out.println(Arrays.toString(lengths));
+        SimplePermClass s = new SimplePermClass();
+        HashMap<Permutation, Integer> dist = reversalDistances(7);
+        
+        for(Permutation q : s.getPerms(7)) {
+            if (counts.containsKey(q)) {
+                System.out.println(counts.get(q) + " " + dist.get(q) + " " + Arrays.toString(q.elements));
+            } else {
+                System.out.println(0 + " "  + dist.get(q) + " "+ Arrays.toString(q.elements));
+            }
+        }
     }
 
     public static boolean isPlusDecomposable(int[] values) {
@@ -103,6 +121,35 @@ public class SimpleReversals {
         Permutation p = new Permutation(v, true);
         Permutation q = PermUtilities.skeleton(p);
         lengths[q.length()]++;
+        if (!counts.containsKey(q)) {
+            counts.put(q, 0);
+        }
+        counts.put(q, counts.get(q)+1);
         //System.out.println(q.length() + " " + count + " " + Arrays.toString(q.elements));
     }
+    
+    public static HashMap<Permutation, Integer> reversalDistances(int n) {
+        HashMap<Permutation, Integer> result = new HashMap();
+        ArrayDeque<Permutation> q = new ArrayDeque();
+        result.put(new Permutation(n), 0);
+        q.add(new Permutation(n));
+        while (!q.isEmpty()) {
+            Permutation p = q.poll();
+            for(int i = 0; i < n; i++) {
+                for(int j = i+2; j <= n; j++) {
+                    int[] qe = Arrays.copyOf(p.elements, n);
+                    reverse(qe, i, j);
+                    Permutation pp = new Permutation(qe, true);
+                    if (!result.containsKey(pp)) {
+                        result.put(pp, result.get(p)+1);
+                        q.add(pp);
+                    }
+                }
+            }
+        }
+        
+        return result;
+    }
+    
+    
 }
