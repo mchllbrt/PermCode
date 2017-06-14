@@ -31,7 +31,7 @@ public class BasisOfSepMergeSep {
         HereditaryProperty d = HereditaryPropertyAdapter.forceHereditary(new Intersection(a, b));
         HereditaryProperty m = new HereditaryMerge(d, d);
         PermProperty irr = new Intersection(new PlusIrreducible(), new MinusIrreducible());
-        for (Permutation p : new Permutations(11)) {
+        for (Permutation p : new Permutations(10)) {
             if (irr.isSatisfiedBy(p) && !m.isSatisfiedBy(p)) {
                 System.out.println(p);
             }

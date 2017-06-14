@@ -123,6 +123,14 @@ public class PermUtilities {
         return new Permutation(q, SAFE);
     }
 
+    public static Permutation subpermutation(Permutation p, int[] indices) {
+        int[] values = new int[indices.length];
+        for (int i = 0; i < values.length; i++) {
+            values[i] = p.elements[indices[i]];
+        }
+        return new Permutation(values, !SAFE);
+    }
+
     /**
      * Computes the set of all one element deletions of a permutation.
      *
@@ -365,6 +373,37 @@ public class PermUtilities {
         return result;
     }
 
+    public static Collection<Permutation> juxtapose(Permutation p, Permutation q) {
+        HashSet<Permutation> result = new HashSet<Permutation>();
+        int n = p.length() + q.length();
+        int[] pIndices = new int[p.length()];
+        for (int i = 0; i < pIndices.length; i++) {
+            pIndices[i] = i;
+        }
+        int[] qIndices = new int[q.length()];
+        for (int i = 0; i < qIndices.length; i++) {
+            qIndices[i] = pIndices.length + i;
+        }
+
+        for (int[] pValues : new Combinations(n, p.length())) {
+            int[] qValues = Combinations.complement(n, pValues);
+            int[] v = new int[n];
+            int pIndex = 0;
+            int qIndex = 0;
+            for (int i = 0; i < n; i++) {
+                if (pIndex < pIndices.length && pIndices[pIndex] == i) {
+                    v[i] = pValues[p.elements[pIndex]];
+                    pIndex++;
+                } else {
+                    v[i] = qValues[q.elements[qIndex]];
+                    qIndex++;
+                }
+            }
+            result.add(new Permutation(v, SAFE));
+        }
+        return result;
+    }
+
     /**
      * Returns the RSK tableau (P-type) associated to a permutation.
      *
@@ -374,7 +413,7 @@ public class PermUtilities {
     public static int[][] tableau(Permutation p) {
         ArrayList<ArrayList<Integer>> tableau = new ArrayList<ArrayList<Integer>>();
         for (int i : p.elements) {
-            System.out.println(i);
+            // System.out.println(i);
             RSKBump(tableau, i);
         }
         int[][] result = new int[tableau.size()][];
@@ -388,10 +427,10 @@ public class PermUtilities {
         }
         return result;
     }
-    
+
     public static int LISLength(Permutation p) {
         ArrayList<Integer> row = new ArrayList<>();
-        for(int v : p.elements) {
+        for (int v : p.elements) {
             int i = 0;
             while (i < row.size() && v > row.get(i)) {
                 i++;
@@ -401,10 +440,10 @@ public class PermUtilities {
             } else {
                 row.add(v);
             }
-         }
+        }
         return row.size();
     }
-    
+
     public static int LDSLength(Permutation p) {
         return LISLength(p.reverse());
     }
@@ -542,10 +581,10 @@ public class PermUtilities {
     /**
      * Determines whether or not a permutation is the lex least element of its
      * symmetry class.
-     * 
+     *
      * @param p the permutation
-     * @return <code>true</code> if (and only if) <code>p</code> is lex least
-     * in its symmetry class
+     * @return <code>true</code> if (and only if) <code>p</code> is lex least in
+     * its symmetry class
      */
     public static boolean isSymmetryRep(Permutation p) {
         for (Symmetry s : Symmetry.values()) {
@@ -555,10 +594,10 @@ public class PermUtilities {
         }
         return true;
     }
-    
+
     /**
      * Returns the symmetry representative for the given permutation.
-     * 
+     *
      * @param p the permutation
      * @return <code>r</code>, the lex least permutation in the symmetry class
      * of <code>p</code>
@@ -574,10 +613,12 @@ public class PermUtilities {
     }
 
     /**
-     * Computes the set of common subpermutations of a collection of permutations.
+     * Computes the set of common subpermutations of a collection of
+     * permutations.
+     *
      * @param source the collection of permutations
-     * @return the set of permutations that occur in every permutation belonging to
-     * <code>source</code>
+     * @return the set of permutations that occur in every permutation belonging
+     * to <code>source</code>
      */
     public static Collection<Permutation> commonSubpermutations(Collection<Permutation> source) {
         HashSet<Permutation> result = new HashSet<Permutation>();
@@ -625,6 +666,7 @@ public class PermUtilities {
 
     /**
      * Returns the avoidance test for a permutation represented as a string.
+     *
      * @param s string representation of a permutation
      * @return an avoidance test for that permutation
      */
@@ -647,6 +689,7 @@ public class PermUtilities {
 
     /**
      * Returns an avoidance test for the given permutation.
+     *
      * @param p the permutation
      * @return in avoidance test for <code>p</code>
      */
@@ -731,6 +774,7 @@ public class PermUtilities {
 
     /**
      * Returns the set of all subpermutations of a permutation
+     *
      * @param p a permutation
      * @return the set of subpermutations of <code>p</code>
      */
@@ -753,6 +797,7 @@ public class PermUtilities {
 
     /**
      * Returns the set of subpermutations of a set of permutations.
+     *
      * @param ps the permutations
      * @return the set of subpermutations of <code>ps</code>
      */
@@ -766,8 +811,8 @@ public class PermUtilities {
 
     public static Iterable<Permutation> onePointExtensions(Permutation p) {
         HashSet<Permutation> result = new HashSet<Permutation>();
-        for(int i = 0; i <= p.length(); i++) {
-            for(int j = 0; j <= p.length(); j++) {
+        for (int i = 0; i <= p.length(); i++) {
+            for (int j = 0; j <= p.length(); j++) {
                 result.add(insert(p, i, j));
             }
         }
@@ -776,39 +821,102 @@ public class PermUtilities {
 
     public static Permutation selectByPosition(Permutation q, boolean[] toKeep) {
         int c = 0;
-        for(int i = 0; i < toKeep.length; i++) {
-            if (toKeep[i]) c++;
+        for (int i = 0; i < toKeep.length; i++) {
+            if (toKeep[i]) {
+                c++;
+            }
         }
         int[] elements = new int[c];
         int index = 0;
-        for(int j = 0; j < q.length(); j++) {
-            if (toKeep[j]) elements[index++] = q.elements[j];
+        for (int j = 0; j < q.length(); j++) {
+            if (toKeep[j]) {
+                elements[index++] = q.elements[j];
+            }
         }
         return new Permutation(elements);
     }
-    
+
     public static Permutation skeleton(Permutation p) {
         int[] mins = Arrays.copyOf(p.elements, p.elements.length);
         int[] maxs = Arrays.copyOf(p.elements, p.elements.length);
         int[] iLengths = new int[p.elements.length];
-        for(int i = 1; i < p.elements.length-1; i++) {
-            for(int j = p.elements.length-1; j >= i; j--) {
-                mins[j] = Math.min(mins[j-1], p.elements[j]);
-                maxs[j] = Math.max(maxs[j-1], p.elements[j]);
-                if (maxs[j] - mins[j] == i) iLengths[j-i] = i;
-            }    
+        for (int i = 1; i < p.elements.length - 1; i++) {
+            for (int j = p.elements.length - 1; j >= i; j--) {
+                mins[j] = Math.min(mins[j - 1], p.elements[j]);
+                maxs[j] = Math.max(maxs[j - 1], p.elements[j]);
+                if (maxs[j] - mins[j] == i) {
+                    iLengths[j - i] = i;
+                }
+            }
         }
         ArrayList<Integer> vs = new ArrayList<Integer>();
         int i = 0;
         while (i < p.elements.length) {
             vs.add(p.elements[i]);
-            i += iLengths[i]+1;
+            i += iLengths[i] + 1;
         }
         int[] result = new int[vs.size()];
         i = 0;
-        for(int v : vs) result[i++] = v;
+        for (int v : vs) {
+            result[i++] = v;
+        }
         return new Permutation(result);
     }
-    
-    
+
+    /**
+     * Returns the cycles of a permutation
+     *
+     * @param p a permutation
+     * @return the cycles of p
+     */
+    public static ArrayList<ArrayList<Integer>> cycles(Permutation p) {
+        ArrayList<ArrayList<Integer>> result = new ArrayList<>();
+        boolean[] used = new boolean[p.length()];
+        for (int i = 0; i < used.length; i++) {
+            if (!used[i]) {
+                ArrayList<Integer> c = new ArrayList<>();
+                c.add(i);
+                used[i] = true;
+                int j = p.elements[i];
+                while (j != i) {
+                    used[j] = true;
+                    c.add(j);
+                    j = p.elements[j];
+                }
+                result.add(c);
+            }
+        }
+
+        return result;
+    }
+
+    public static Permutation substitute(Permutation p, Permutation[] blocks) {
+        if (blocks.length != p.elements.length) {
+            throw new PermLibException("Incorrect number of blocks in a substitution");
+        }
+        int s = 0;
+        for (Permutation block : blocks) {
+            s += block.length();
+        }
+        int[] result = new int[s];
+        int[] vLow = new int[p.length()];
+        for (int i = 0; i < p.length(); i++) {
+            for (int j = i + 1; j < p.length(); j++) {
+                if (p.elements[i] < p.elements[j]) {
+                    vLow[j] += blocks[i].length();
+                } else {
+                    vLow[i] += blocks[j].length();
+                }
+            }
+        }
+        int ri = 0;
+        for (int i = 0; i < blocks.length; i++) {
+            Permutation block = blocks[i];
+            for (int j = 0; j < block.length(); j++) {
+                result[ri++] = vLow[i] + block.elements[j];
+            }
+        }
+        return new Permutation(result, SAFE);
+    }
+
 }

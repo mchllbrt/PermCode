@@ -22,9 +22,39 @@ import permlib.processor.PermCounter;
  * @author Michael Albert
  */
 public class DegreeSequences {
+    
+    static final Permutation[] BAD = new Permutation[] {
+        new Permutation("43512"),
+        new Permutation("21534"),
+        new Permutation("23154"),
+        new Permutation("45132")
+    };
 
     public static void main(String[] args) {
-        findLots(13,18);
+        // findLots(5,2);
+        badClassSUD();
+    }
+    
+    public static void badClassSUD() {
+        
+        PermutationClass c = new PermutationClass(BAD);
+        for(int n = 6; n <= 12; n++) {
+            System.out.println("Length " + n);
+            for(Permutation p : new Permutations(c, n)) {
+                int[] ds = degreeSequenceArray(p);
+                ArrayList<Permutation> ps = permsFromDegreeSequence(ds);
+                if (ps.size() > 1) {
+                   System.out.print(p);
+                   for(Permutation q : ps) {
+                        if (!q.equals(p)) System.out.print(", " + q);
+                   }
+                   System.out.println();
+                }
+            }
+        
+        }
+        
+        
     }
 
     public static void countDegreeSequences(int k) {

@@ -23,28 +23,47 @@ public class SimpleReversals {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        doMany();
+        doMany(true);
     }
     
     public static void doMany() {
+        doMany(false);
+    }
+    
+    public static void doMany(boolean atEnd) {
         counts.clear();
-        int n = 30;
+        int n = 100;
         int trials = 1000000;
         int[] lengths = new int[n+1];
         for (int i = 0; i < trials; i++) {
-            doOne(n, lengths);
-            
-        }
-        SimplePermClass s = new SimplePermClass();
-        HashMap<Permutation, Integer> dist = reversalDistances(7);
-        
-        for(Permutation q : s.getPerms(7)) {
-            if (counts.containsKey(q)) {
-                System.out.println(counts.get(q) + " " + dist.get(q) + " " + Arrays.toString(q.elements));
+            if (atEnd) {
+                doOneAtEnds(n, lengths);
             } else {
-                System.out.println(0 + " "  + dist.get(q) + " "+ Arrays.toString(q.elements));
+                doOne(n,lengths);
             }
         }
+        for(int i = 0; i < lengths.length; i++) {
+            System.out.println(i + " " + lengths[i]);
+        }
+        
+    }
+    
+    public static void doOneAtEnds(int length, int[] lengths) {
+        int[] v = new Permutation(length).elements;
+        int count = 0;
+        while (isPlusDecomposable(v) || isMinusDecomposable(v)) {
+            count++;
+            randomReverseAtEnd(v);
+        }
+        // System.out.println(Arrays.toString(v));
+        Permutation p = new Permutation(v, true);
+        Permutation q = PermUtilities.skeleton(p);
+        lengths[q.length()]++;
+        if (!counts.containsKey(q)) {
+            counts.put(q, 0);
+            // System.out.println(q.length() + " " + count);
+        }
+        counts.put(q, counts.get(q)+1);
     }
 
     public static boolean isPlusDecomposable(int[] values) {
@@ -94,21 +113,7 @@ public class SimpleReversals {
         return result;
     }
 
-    public static boolean isToricSimple(Permutation p) {
-        int[] v = p.elements;
-        for (int i = 0; i < v.length; i++) {
-            for (int j = 0; j < v.length; j++) {
-                Permutation q = new Permutation(rotate(v, i, j), true);
-                System.out.println(q);
-                if (!PermUtilities.isSimple(q)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
+   
     public static void doOne(int length, int[] lengths) {
         int[] v = new Permutation(length).elements;
         // System.out.println(Arrays.toString(v));
@@ -123,6 +128,7 @@ public class SimpleReversals {
         lengths[q.length()]++;
         if (!counts.containsKey(q)) {
             counts.put(q, 0);
+            // System.out.println(q.length() + " " + count);
         }
         counts.put(q, counts.get(q)+1);
         //System.out.println(q.length() + " " + count + " " + Arrays.toString(q.elements));
@@ -149,6 +155,15 @@ public class SimpleReversals {
         }
         
         return result;
+    }
+
+    private static void randomReverseAtEnd(int[] values) {
+        int mid = 1+R.nextInt(values.length-1);
+        if (R.nextBoolean()) {
+            reverse(values, 0, mid);
+        } else {
+            reverse(values, mid, values.length);
+        }
     }
     
     

@@ -52,6 +52,10 @@ public final class AvoidsFromRight extends HereditaryPropertyAdapter {
     public final boolean isSatisfiedBy(Permutation q, int includingFinal) {
         return !inv.isSatisfiedBy(q, includingFinal);
     }
+    
+    public final boolean isSatisfiedBy(int[] values, int includingFinal) {
+        return !inv.isSatisfiedBy(values, includingFinal);
+    }
 
     @Override
     public boolean isSatisfiedBy(int[] values) {
