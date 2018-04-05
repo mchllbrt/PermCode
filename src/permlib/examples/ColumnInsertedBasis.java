@@ -7,6 +7,7 @@ package permlib.examples;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import permlib.PermUtilities;
 import permlib.Permutation;
 import permlib.Permutations;
@@ -23,16 +24,22 @@ public class ColumnInsertedBasis {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        foo(new Permutation("1423"),1);
+        // foo(new Permutation("1423"),1);
+        Permutation p = new Permutation("312");
+        PermutationClass c = new PermutationClass(inserts(p,1));
+        LRmaxCategories(c,7);
+        c = new PermutationClass(inserts(p,2));
+        System.out.println();
+        LRmaxCategories(c,7);
     }
     
     public static void doIt() {
         
-       for (Permutation p : new Permutations(3)) {
+       for (Permutation p : new Permutations(4)) {
             for (int i = 1; i < p.length(); i++) {
                 // System.out.println("Perm " + p + " Column: " + i);
                 if (isRep(p)) {
-                    spectrum(inserts(p, i), 8);
+                    spectrum(inserts(p, i), 12);
                     System.out.println(" " + p + " " + "C" + i);
                 }
             }
@@ -72,5 +79,32 @@ public class ColumnInsertedBasis {
                 && p.compareTo(p.complement()) <= 0
                 && p.compareTo(p.reverse().complement()) <= 0;
     }
-
+    
+    public static void LRmaxCategories(PermutationClass c, int n) {
+        HashMap<Integer, Integer> counts = new HashMap<>();
+        for(Permutation p : new Permutations(c,n)) {
+            int lt = lrMax(p).size();
+            if (counts.containsKey(lt)) {
+                counts.put(lt, counts.get(lt)+1);
+            } else {
+                counts.put(lt, 1);
+            }
+        }
+        for(int lr : counts.keySet()) {
+            System.out.println(lr + " " + counts.get(lr));
+        }
+        
+    }
+    
+    public static ArrayList<Integer> lrMax(Permutation p) {
+        ArrayList<Integer> result = new ArrayList<>();
+        int m = -1;
+        for(int i = 0; i < p.length(); i++) {
+            if (p.elements[i] > m) {
+                result.add(i);
+                m = i;
+            }
+        }
+        return result;
+    }
 }

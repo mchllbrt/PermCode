@@ -1,5 +1,7 @@
 package permlib;
 
+import java.util.Random;
+
 /**
  * This class represents a permutation. The permutation is represented by a
  * 0-based area of elements. This array is <em>public</em> as a matter of
@@ -10,6 +12,17 @@ package permlib;
 public class Permutation implements Comparable<Permutation> {
 
     public static final Permutation ONE = new Permutation("1");
+    
+    static Random R = new Random(24608246435L);
+    static int[][] hc = new int[32][32];
+    
+    static {
+        for(int i = 0; i < hc.length; i++) {
+            for(int j = 0; j < hc[i].length; j++) {
+                hc[i][j] = R.nextInt();
+            }
+        }
+    }
     
     /**
      * The elements of this permutation. <p> Internally these are represented as
@@ -283,6 +296,11 @@ public class Permutation implements Comparable<Permutation> {
 
     @Override
     public int hashCode() {
+//        int hashCode = 0;
+//        for(int i = 0; i < elements.length; i++) {
+//            hashCode ^= hc[i & 31][elements[i] & 31];
+//        }
+//        return hashCode;
         return java.util.Arrays.hashCode(elements);
     }
 

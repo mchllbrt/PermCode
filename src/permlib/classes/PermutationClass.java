@@ -14,6 +14,7 @@ import static permlib.classes.PermClassInterface.MAXIMUM_STORED_LENGTH;
 import static permlib.PermUtilities.SAFE;
 import static permlib.PermUtilities.rightExtensions;
 import permlib.processor.PermCollector;
+import permlib.processor.PermCounter;
 import permlib.processor.PermProcessor;
 import permlib.property.AvoidsFromRight;
 import permlib.property.HereditaryProperty;
@@ -194,6 +195,19 @@ public class PermutationClass implements PermClassInterface {
 
     public Iterator<Permutation> getRestrictedIterator(int n, PermProperty prop) {
         return getRestrictedIterator(n, n, prop);
+    }
+
+    /**
+     * Convenience method for counting the permutations in a class. Generally
+     * speaking it will be preferred to use your own processor etc.
+     * 
+     * @param n the size of the permutations
+     * @return the number of permutations in the class of that size.
+     */
+    public long countPerms(int n) {
+        PermCounter c = new PermCounter();
+        this.processPerms(n, c);
+        return c.getCount();
     }
 
     private class PermutationClassIterator implements Iterator<Permutation> {

@@ -11,7 +11,7 @@ import permlib.Permutations;
 
 /**
  *
- * @author MichaelAlbert
+ * @author Michael Albert
  */
 public class MultipleAvoidsFromRight implements HereditaryProperty {
 

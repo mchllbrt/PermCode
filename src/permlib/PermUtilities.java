@@ -918,5 +918,25 @@ public class PermUtilities {
         }
         return new Permutation(result, SAFE);
     }
+    
+    public static Permutation[] sumComponents(Permutation q) {
+        int[] e = q.elements;
+        int low = 0;
+        int m = e[0];
+        ArrayList<Permutation> comps = new ArrayList<Permutation>();
+        for (int i = 1; i < e.length; i++) {
+            if (e[i] > m) {
+                if (m == i - 1) {
+                    comps.add(q.segment(low, i));
+                    low = i;
+                }
+                m = e[i];
+            }
+        }
+        comps.add(q.segment(low, q.length()));
+        Permutation[] result = new Permutation[comps.size()];
+        comps.toArray(result);
+        return result;
+    }
 
 }
