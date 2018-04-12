@@ -2,6 +2,7 @@ package permlib.utilities;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Random;
 
 /**
  * A class that provides an iterator for combinations of
@@ -24,6 +25,27 @@ public class Combinations implements Iterable<int[]> {
            }
        }
        return result;
+    }
+
+    public static int[] random(int n, int k, Random R) {
+        int[] result = new int[k];
+        int[] c = new int[n];
+        for (int i = 0; i < n; i++) {
+            c[i] = i;
+        }
+        for (int i = 0; i < k; i++) {
+            int j = i + R.nextInt(n - i);
+            int t = c[i];
+            c[i] = c[j];
+            c[j] = t;
+            result[i] = c[i];
+        }
+        Arrays.sort(result);
+        return result;
+    }
+
+    public static int[] random(int n, int k) {
+        return random(n, k, new Random());
     }
 
     private int n;

@@ -741,11 +741,14 @@ public class PermUtilities {
      * @return a random permutation of given length.
      */
     public static Permutation randomPermutation(int length) {
+        return randomPermutation(length, new Random());
+    }
+
+    public static Permutation randomPermutation(int length, Random r) {
         int[] elements = new int[length];
         for (int i = 0; i < elements.length; i++) {
             elements[i] = i;
         }
-        Random r = new Random();
         for (int i = elements.length - 1; i >= 0; i--) {
             int randIndex = r.nextInt(i + 1);
             int temp = elements[i];
@@ -918,7 +921,7 @@ public class PermUtilities {
         }
         return new Permutation(result, SAFE);
     }
-    
+
     public static Permutation[] sumComponents(Permutation q) {
         int[] e = q.elements;
         int low = 0;

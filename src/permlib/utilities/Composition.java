@@ -1,6 +1,7 @@
 package permlib.utilities;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * Represents a composition of an integer <code>n</code> into <code>k</code>
@@ -44,10 +45,8 @@ public class Composition {
         return parts;
     }
     
-    public static void main(String[] args) {
-        Composition c = new Composition(5,4);
-        do {
-            System.out.println(Arrays.toString(c.parts));
-        } while (c.next().length > 0);
-    }
+    
+    
+    
+    
 }
