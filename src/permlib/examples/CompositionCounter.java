@@ -1,5 +1,6 @@
 package permlib.examples;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -147,16 +148,32 @@ public class CompositionCounter {
     }
 
     public static void main(String[] args) {
-        for (int n = 26; n <= 30; n++) {
-            for (int i = 0; i < (2 << (n - 1)); i++) {
-                if (i % (2 << 20) == 0) System.out.println(i/(2 << 20));
-                CompositionCounter c = makeCounter(n, i);
-                if (!c.uniModal()) {
-                    System.out.println(c);
-                }
-            }
-            System.out.println("Done " + n);
+        DFSCompositions(4);
+    }
+    
+    static ArrayDeque<Integer> composition = new ArrayDeque<>();
+    
+    public static void DFSCompositions(int n) {
+        
+        int remaining = n;
+        for(int part = remaining; part > 0; part--) {
+            composition.push(part);
+            System.out.println(composition);
+            DFSCompositions(n-remaining);
+            composition.pop();
         }
-
+        
     }
 }
+
+
+//        for (int n = 26; n <= 30; n++) {
+//            for (int i = 0; i < (2 << (n - 1)); i++) {
+//                if (i % (2 << 20) == 0) System.out.println(i/(2 << 20));
+//                CompositionCounter c = makeCounter(n, i);
+//                if (!c.uniModal()) {
+//                    System.out.println(c);
+//                }
+//            }
+//            System.out.println("Done " + n);
+//        }
