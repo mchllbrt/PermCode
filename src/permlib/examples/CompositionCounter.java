@@ -12,19 +12,8 @@ import java.util.Objects;
  * @author Michael Albert
  */
 public class CompositionCounter {
-    
+
     static HashMap<ArrayList<Integer>, CompositionCounter> computed = new HashMap<>();
-    
-    static{
-        for (int n = 1; n <= 20; n++) {
-            for (int i = 0; i < (2 << (n - 1)); i++) {
-                CompositionCounter c = makeCounter(n, i);
-                computed.put(c.c, c);
-            }
-            System.out.println("Init " + n);
-        }
-        
-    }
 
     ArrayList<Integer> c;
     long[][] counts;
@@ -42,6 +31,20 @@ public class CompositionCounter {
         if (c.size() > 0) {
             computeCounts();
         }
+    }
+
+    public CompositionCounter(int part, CompositionCounter tailCounter) {
+        this.c = new ArrayList<Integer>();
+        c.add(part);
+        c.addAll(tailCounter.c);
+        maxPart = Math.max(part, tailCounter.maxPart);
+        sum = part + tailCounter.sum;
+        counts = new long[sum + 1][maxPart + 1];
+        spectrum = new long[sum + 1];
+        spectrum[0] = 1;
+        counts[0][0] = 1;
+        computeCountsFrom(tailCounter);
+
     }
 
     public static CompositionCounter makeCounter(int sum, int index) {
@@ -81,15 +84,19 @@ public class CompositionCounter {
         return "Comp: " + c + " Spec: " + Arrays.toString(spectrum);
     }
 
-    public boolean uniModal() {
+    public boolean unimodal() {
+        return CompositionCounter.this.unimodal(spectrum);
+    }
+
+    public static boolean unimodal(long[] s) {
         int i = 1;
-        while (i <= sum && spectrum[i] >= spectrum[i - 1]) {
+        while (i < s.length && s[i] >= s[i - 1]) {
             i++;
         }
-        while (i <= sum && spectrum[i] <= spectrum[i - 1]) {
+        while (i < s.length && s[i] <= s[i - 1]) {
             i++;
         }
-        return i > sum;
+        return i == s.length;
     }
 
     @Override
@@ -147,31 +154,53 @@ public class CompositionCounter {
         }
     }
 
-    public static void main(String[] args) {
-        DFSCompositions(4);
-    }
-    
     static ArrayDeque<Integer> composition = new ArrayDeque<>();
-    
-    public static void DFSCompositions(int n) {
-        
-        int remaining = n;
-        for(int part = remaining; part > 0; part--) {
-            composition.push(part);
-            System.out.println(composition);
-            DFSCompositions(n-remaining);
-            composition.pop();
+    static long count = 0;
+
+    public static void DFSCompositions(int n, CompositionCounter tailCounter) {
+
+        if (n == 0) {
+            return;
         }
-        
+        for (int part = n; part > 0; part--) {
+            CompositionCounter newCounter = new CompositionCounter(part, tailCounter);
+            count++;
+            if (count % 1000000 == 0) {
+                System.out.println("Computed " + (count / 1000000) + "M");
+            }
+            if (!newCounter.unimodal()) {
+                System.out.println(newCounter);
+            }
+            DFSCompositions(n - part, newCounter);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        DFSCompositions(34, new CompositionCounter(new ArrayList<Integer>()));
+        System.out.println("Done");
+    }
+
+    private void computeCountsFrom(CompositionCounter tailCounter) {
+
+        for (int k = 1; k <= sum; k++) {
+            for (int f = 1; f <= Math.min(k, maxPart); f++) {
+                if (c.get(0) >= f) {
+                    counts[k][f] = tailCounter.getCount(k - f);
+                } else {
+                    counts[k][f] = tailCounter.getCount(k, f);
+                }
+                spectrum[k] += counts[k][f];
+            }
+        }
     }
 }
-
 
 //        for (int n = 26; n <= 30; n++) {
 //            for (int i = 0; i < (2 << (n - 1)); i++) {
 //                if (i % (2 << 20) == 0) System.out.println(i/(2 << 20));
 //                CompositionCounter c = makeCounter(n, i);
-//                if (!c.uniModal()) {
+//                if (!c.unimodal()) {
 //                    System.out.println(c);
 //                }
 //            }
