@@ -1,13 +1,13 @@
 package permlab.ui;
 
-import javax.swing.JTextArea;
+import javax.swing.*;
 
 /**
  * Defines a text frame to display lists of permutations.
  * 
  * @author M Belton
  */
-public class TableTextFrame extends javax.swing.JFrame {
+public class TableTextFrame extends JFrame {
 
     /**
      * Creates new form TableTextFrame
@@ -35,12 +35,12 @@ public class TableTextFrame extends javax.swing.JFrame {
 
         if (values[0].length == 1) {
             for (int i = 0; i < values.length - 1; i++) {
-                result.append(values[i][0] + ", ");
+                result.append(values[i][0]).append(", ");
             }
             result.append(values[values.length - 1][0]);
         } else if (values.length == 1) {
             for (int i = 0; i < values[0].length - 1; i++) {
-                result.append(values[0][i] + ", ");
+                result.append(values[0][i]).append(", ");
             }
             result.append(values[0][values[0].length - 1]);
         } else {
@@ -48,10 +48,10 @@ public class TableTextFrame extends javax.swing.JFrame {
             while (row < values.length) {
                 int col = 0;
                 while (col < values[0].length - 1) {
-                    result.append(values[row][col] + ",\t");
+                    result.append(values[row][col]).append(",\t");
                     col++;
                 }
-                result.append(values[row][values[0].length - 1] + "\n");
+                result.append(values[row][values[0].length - 1]).append("\n");
                 row++;
             }
         }
@@ -71,24 +71,24 @@ public class TableTextFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        textPane = new javax.swing.JScrollPane();
-        textArea = new javax.swing.JTextArea();
+        textPane = new JScrollPane();
+        textArea = new JTextArea();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         textArea.setColumns(20);
         textArea.setRows(5);
         textPane.setViewportView(textArea);
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(textPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(textPane, GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, textPane, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(textPane, GroupLayout.Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
         );
 
         pack();
@@ -104,19 +104,13 @@ public class TableTextFrame extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TableTextFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TableTextFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TableTextFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | UnsupportedLookAndFeelException | IllegalAccessException | InstantiationException ex) {
             java.util.logging.Logger.getLogger(TableTextFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -129,7 +123,7 @@ public class TableTextFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea textArea;
-    private javax.swing.JScrollPane textPane;
+    private JTextArea textArea;
+    private JScrollPane textPane;
     // End of variables declaration//GEN-END:variables
 }
