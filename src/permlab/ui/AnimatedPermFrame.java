@@ -6,9 +6,17 @@
  */
 package permlab.ui;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.KeyboardFocusManager;
+import permlab.utilities.ExportInterface;
+import permlab.utilities.FileUtilities;
+import permlab.utilities.PaintUtilities;
+import permlib.Permutation;
+import permlib.property.PermProperty;
+import permlib.property.Universal;
+
+import javax.imageio.*;
+import javax.imageio.metadata.IIOMetadata;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -16,24 +24,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageTypeSpecifier;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.metadata.IIOMetadata;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import permlib.Permutation;
-import permlib.property.PermProperty;
-import permlib.property.Universal;
-import permlab.utilities.ExportInterface;
+
 import static permlab.utilities.ExportInterface.fileChooser;
-import permlab.utilities.FileUtilities;
-import permlab.utilities.PaintUtilities;
 
 /**
  * The GUI class that represents the frame for displaying an animation of a
@@ -41,7 +33,7 @@ import permlab.utilities.PaintUtilities;
  *
  * @author Michael Albert, M Belton
  */
-public class AnimatedPermFrame extends javax.swing.JFrame {
+public class AnimatedPermFrame extends JFrame {
 
     private Permutation[] perms = new Permutation[0];
     private int permIndex;
@@ -52,7 +44,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Creates new AnimatedPermFrame with an AnimationTask.
-     * 
+     *
      * @param parentTask thread generating permutations to display
      */
     public AnimatedPermFrame(AnimationTask parentTask) {
@@ -84,7 +76,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Creates new AnimatedPermFrame from a collection of perms.
-     * 
+     *
      * @param perms collection to animate
      */
     public AnimatedPermFrame(Collection<Permutation> perms) {
@@ -109,31 +101,31 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        popupMenu = new javax.swing.JPopupMenu();
-        controlPanel = new javax.swing.JPanel();
+        popupMenu = new JPopupMenu();
+        controlPanel = new JPanel();
         displayPanel = new DisplayPanel();
-        optionsPanel = new javax.swing.JPanel();
-        stepButton = new javax.swing.JButton();
-        startButton = new javax.swing.JButton();
-        stopButton = new javax.swing.JButton();
-        resetButton = new javax.swing.JButton();
-        speedSlider = new javax.swing.JSlider();
-        slowLabel = new javax.swing.JLabel();
-        fastLabel = new javax.swing.JLabel();
-        frameLabel = new javax.swing.JLabel();
-        frameNumberTextField = new javax.swing.JTextField();
-        totalFramesLabel = new javax.swing.JLabel();
-        sortButton = new javax.swing.JButton();
+        optionsPanel = new JPanel();
+        stepButton = new JButton();
+        startButton = new JButton();
+        stopButton = new JButton();
+        resetButton = new JButton();
+        speedSlider = new JSlider();
+        slowLabel = new JLabel();
+        fastLabel = new JLabel();
+        frameLabel = new JLabel();
+        frameNumberTextField = new JTextField();
+        totalFramesLabel = new JLabel();
+        sortButton = new JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosed(java.awt.event.WindowEvent evt) {
                 formWindowClosed(evt);
             }
         });
 
-        displayPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        displayPanel.setPreferredSize(new java.awt.Dimension(500, 300));
+        displayPanel.setBorder(BorderFactory.createEtchedBorder());
+        displayPanel.setPreferredSize(new Dimension(500, 300));
         displayPanel.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 displayPanelpopupMenuHandler(evt);
@@ -146,18 +138,18 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
             }
         });
 
-        org.jdesktop.layout.GroupLayout displayPanelLayout = new org.jdesktop.layout.GroupLayout(displayPanel);
+        GroupLayout displayPanelLayout = new GroupLayout(displayPanel);
         displayPanel.setLayout(displayPanelLayout);
         displayPanelLayout.setHorizontalGroup(
-            displayPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 0, Short.MAX_VALUE)
+            displayPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         displayPanelLayout.setVerticalGroup(
-            displayPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(0, 321, Short.MAX_VALUE)
+            displayPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGap(0, 321, Short.MAX_VALUE)
         );
 
-        optionsPanel.setPreferredSize(new java.awt.Dimension(500, 300));
+        optionsPanel.setPreferredSize(new Dimension(500, 300));
 
         stepButton.setText("Step");
         stepButton.addActionListener(new java.awt.event.ActionListener() {
@@ -200,7 +192,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
         frameLabel.setText("Frame Number");
 
         frameNumberTextField.setText("0");
-        frameNumberTextField.setPreferredSize(new java.awt.Dimension(110, 28));
+        frameNumberTextField.setPreferredSize(new Dimension(110, 28));
         frameNumberTextField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 frameNumberTextFieldMouseClicked(evt);
@@ -221,99 +213,99 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
             }
         });
 
-        org.jdesktop.layout.GroupLayout optionsPanelLayout = new org.jdesktop.layout.GroupLayout(optionsPanel);
+        GroupLayout optionsPanelLayout = new GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
         optionsPanelLayout.setHorizontalGroup(
-            optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(optionsPanelLayout.createSequentialGroup()
-                .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(optionsPanelLayout.createSequentialGroup()
-                        .add(71, 71, 71)
-                        .add(sortButton)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(frameNumberTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(totalFramesLabel)
-                        .add(0, 0, Short.MAX_VALUE))
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, optionsPanelLayout.createSequentialGroup()
-                        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, optionsPanelLayout.createSequentialGroup()
-                                .add(slowLabel)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(speedSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 321, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                                .add(fastLabel))
-                            .add(org.jdesktop.layout.GroupLayout.TRAILING, optionsPanelLayout.createSequentialGroup()
-                                .add(stepButton)
-                                .add(18, 18, 18)
-                                .add(startButton)
-                                .add(18, 18, 18)
-                                .add(stopButton)
-                                .add(18, 18, 18)
-                                .add(resetButton)
-                                .add(12, 12, 12)))))
+            optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(optionsPanelLayout.createSequentialGroup()
+                .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(sortButton)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(frameNumberTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(totalFramesLabel)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(GroupLayout.Alignment.TRAILING, optionsPanelLayout.createSequentialGroup()
+                        .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addGroup(GroupLayout.Alignment.TRAILING, optionsPanelLayout.createSequentialGroup()
+                                .addComponent(slowLabel)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(speedSlider, GroupLayout.PREFERRED_SIZE, 321, GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(fastLabel))
+                            .addGroup(GroupLayout.Alignment.TRAILING, optionsPanelLayout.createSequentialGroup()
+                                .addComponent(stepButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(startButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(stopButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(resetButton)
+                                .addGap(12, 12, 12)))))
                 .addContainerGap())
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, optionsPanelLayout.createSequentialGroup()
-                .add(0, 0, Short.MAX_VALUE)
-                .add(frameLabel)
-                .add(150, 150, 150))
+            .addGroup(GroupLayout.Alignment.TRAILING, optionsPanelLayout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(frameLabel)
+                .addGap(150, 150, 150))
         );
         optionsPanelLayout.setVerticalGroup(
-            optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(optionsPanelLayout.createSequentialGroup()
-                .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(optionsPanelLayout.createSequentialGroup()
+            optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(optionsPanelLayout.createSequentialGroup()
+                .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(fastLabel)
-                            .add(slowLabel)))
-                    .add(optionsPanelLayout.createSequentialGroup()
-                        .add(speedSlider, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                            .add(resetButton)
-                            .add(stopButton)
-                            .add(startButton)
-                            .add(stepButton))))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(frameLabel)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(optionsPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(frameNumberTextField, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(totalFramesLabel)
-                    .add(sortButton))
-                .add(78, 78, 78))
+                        .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                            .addComponent(fastLabel)
+                            .addComponent(slowLabel)))
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
+                        .addComponent(speedSlider, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(resetButton)
+                            .addComponent(stopButton)
+                            .addComponent(startButton)
+                            .addComponent(stepButton))))
+                .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(frameLabel)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(optionsPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                    .addComponent(frameNumberTextField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalFramesLabel)
+                    .addComponent(sortButton))
+                .addGap(78, 78, 78))
         );
 
-        org.jdesktop.layout.GroupLayout controlPanelLayout = new org.jdesktop.layout.GroupLayout(controlPanel);
+        GroupLayout controlPanelLayout = new GroupLayout(controlPanel);
         controlPanel.setLayout(controlPanelLayout);
         controlPanelLayout.setHorizontalGroup(
-            controlPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(controlPanelLayout.createSequentialGroup()
-                .add(optionsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 400, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .add(displayPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+            controlPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(controlPanelLayout.createSequentialGroup()
+                .addComponent(optionsPanel, GroupLayout.PREFERRED_SIZE, 400, GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(displayPanel, GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
         );
         controlPanelLayout.setVerticalGroup(
-            controlPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(controlPanelLayout.createSequentialGroup()
-                .add(displayPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(optionsPanel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 132, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+            controlPanelLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(controlPanelLayout.createSequentialGroup()
+                .addComponent(displayPanel, GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(optionsPanel, GroupLayout.PREFERRED_SIZE, 132, GroupLayout.PREFERRED_SIZE))
         );
 
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(getContentPane());
+        GroupLayout layout = new GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(controlPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addComponent(controlPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(controlPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(0, 6, Short.MAX_VALUE))
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(controlPanel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         pack();
@@ -322,7 +314,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     /**
      * Sorts the collection of permutation being displayed in lexicographical
      * order.
-     * 
+     *
      * @param evt event of button being pressed
      */
     private void sortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sortButtonActionPerformed
@@ -332,22 +324,22 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_sortButtonActionPerformed
 
     /**
-     * Action responding to user specifying a permutation at a frame number to 
+     * Action responding to user specifying a permutation at a frame number to
      * display.
-     * 
+     *
      * @param evt event in the text field displaying the frame number
      */
     private void frameNumberTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_frameNumberTextFieldActionPerformed
         try {
             permIndex = Integer.parseInt(frameNumberTextField.getText()) - 1;
             refresh();
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException ignored) {
         }
     }//GEN-LAST:event_frameNumberTextFieldActionPerformed
 
     /**
      * Stops the animation when the frame number text field is clicked.
-     * 
+     *
      * @param evt event when mouse clicks the frame number text field.
      */
     private void frameNumberTextFieldMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_frameNumberTextFieldMouseClicked
@@ -357,7 +349,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     /**
      * Adjusts the spend that the animation is shown depending on the slider
      * value.
-     * 
+     *
      * @param evt event of slider value being altered
      */
     private void speedSliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_speedSliderStateChanged
@@ -370,7 +362,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Resets the animation by going back to the first frame.
-     * 
+     *
      * @param evt event of reset button being pressed
      */
     private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
@@ -382,7 +374,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Stops the animation being displayed.
-     * 
+     *
      * @param evt event of the stop button being pressed
      */
     private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
@@ -391,7 +383,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Starts the animation.
-     * 
+     *
      * @param evt event of the start button being pressed
      */
     private void startButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startButtonActionPerformed
@@ -400,7 +392,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Steps through the animation by one frame.
-     * 
+     *
      * @param evt event of the stop button being pressed
      */
     private void stepButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stepButtonActionPerformed
@@ -411,7 +403,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     /**
      * If the pop-up menu is triggered then stop the animation and show the menu
      * at the spot clicked.
-     * 
+     *
      * @param evt the mouse being clicked
      */
     private void displayPanelpopupMenuHandler(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_displayPanelpopupMenuHandler
@@ -425,7 +417,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
     /**
      * As the window is closed stop the animation and the threads traversing the
      * collection and calculating the rest of the collection.
-     * 
+     *
      * @param evt the window being closed
      */
     private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
@@ -440,28 +432,22 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AnimatedPermFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AnimatedPermFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AnimatedPermFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AnimatedPermFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new AnimatedPermFrame().setVisible(true);
@@ -469,21 +455,21 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel controlPanel;
-    private javax.swing.JPanel displayPanel;
-    private javax.swing.JLabel fastLabel;
-    private javax.swing.JLabel frameLabel;
-    private javax.swing.JTextField frameNumberTextField;
-    private javax.swing.JPanel optionsPanel;
-    private javax.swing.JPopupMenu popupMenu;
-    private javax.swing.JButton resetButton;
-    private javax.swing.JLabel slowLabel;
-    private javax.swing.JButton sortButton;
-    private javax.swing.JSlider speedSlider;
-    private javax.swing.JButton startButton;
-    private javax.swing.JButton stepButton;
-    private javax.swing.JButton stopButton;
-    private javax.swing.JLabel totalFramesLabel;
+    private JPanel controlPanel;
+    private JPanel displayPanel;
+    private JLabel fastLabel;
+    private JLabel frameLabel;
+    private JTextField frameNumberTextField;
+    private JPanel optionsPanel;
+    private JPopupMenu popupMenu;
+    private JButton resetButton;
+    private JLabel slowLabel;
+    private JButton sortButton;
+    private JSlider speedSlider;
+    private JButton startButton;
+    private JButton stepButton;
+    private JButton stopButton;
+    private JLabel totalFramesLabel;
     // End of variables declaration//GEN-END:variables
     private JMenuItem exportOption = new JMenuItem("Export current");
     private JMenuItem exportAllAsTextOption = new JMenuItem("Export all in textbox");
@@ -509,7 +495,6 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
                 TextFrame textDisplay = new TextFrame();
                 textDisplay.addText(perms);
                 textDisplay.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                int x = displayPanel.getX();
                 textDisplay.setLocation(
                         displayPanel.getX() + displayPanel.getWidth() + 10,
                         displayPanel.getY());
@@ -530,7 +515,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
      * Exports the entire collection as a GIF.
      * NOTE: This GIF is set up so that it will display all permutations once
      * without looping.
-     * 
+     *
      * @param perms permutations to be exported
      * @param width width of the GIF
      * @param height height of the GIF
@@ -564,7 +549,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
                         wr.writeToSequence(new IIOImage(image, null, null), param);
                     }
-                } catch (Exception excp) {
+                } catch (Exception ignored) {
                 }
             }
         }
@@ -584,7 +569,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Add permutations to the current collection being displayed.
-     * 
+     *
      * @param extraPerms additional permutations to add
      * @param prop property pertaining to permutation collection
      */
@@ -595,7 +580,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
             System.arraycopy(perms, 0, newPerms, extraPerms.size(), perms.length);
             this.perms = newPerms;
         } else {
-            ArrayList<Permutation> temp = new ArrayList<Permutation>();
+            ArrayList<Permutation> temp = new ArrayList<>();
             for (Permutation p : extraPerms) {
                 if (prop.isSatisfiedBy(p)) {
                     temp.add(p);
@@ -612,7 +597,7 @@ public class AnimatedPermFrame extends javax.swing.JFrame {
 
     /**
      * Add permutations to the current collection being displayed.
-     * 
+     *
      * @param extraPerms additional permutations to add
      */
     void addPerms(Collection<Permutation> extraPerms) {
