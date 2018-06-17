@@ -98,6 +98,13 @@ public class CompositionCounter {
         }
         return i == s.length;
     }
+    
+    public static boolean logConcave(long[] s) {
+        for(int i = 2; i < s.length-1; i++) {
+            if (s[i]*s[i] - s[i-1]*s[i+1] < 0) return false;
+        }
+        return true;
+    }
 
     @Override
     public int hashCode() {
@@ -157,9 +164,9 @@ public class CompositionCounter {
     static ArrayDeque<Integer> composition = new ArrayDeque<>();
     static long count = 0;
 
-    public static void DFSCompositions(int n, CompositionCounter tailCounter) {
+    public static void DFSCompositions(int n, CompositionCounter tailCounter, int maxParts) {
 
-        if (n == 0) {
+        if (n == 0 || tailCounter.c.size() >= maxParts) {
             return;
         }
         for (int part = n; part > 0; part--) {
@@ -168,16 +175,39 @@ public class CompositionCounter {
             if (count % 1000000 == 0) {
                 System.out.println("Computed " + (count / 1000000) + "M");
             }
-            if (!newCounter.unimodal()) {
+            if (!logConcave(newCounter.spectrum)) {
                 System.out.println(newCounter);
             }
-            DFSCompositions(n - part, newCounter);
+            DFSCompositions(n - part, newCounter, maxParts);
+        }
+
+    }
+    
+    public static void PartBoundedDFSCompositions(int n, CompositionCounter tailCounter, int maxPart) {
+
+        if (n == 0) {
+            return;
+        }
+        for (int part = Math.min(maxPart,n); part > 0; part--) {
+            CompositionCounter newCounter = new CompositionCounter(part, tailCounter);
+            count++;
+            if (count % 1000000 == 0) {
+                System.out.println("Computed " + (count / 1000000) + "M");
+            }
+            if (!unimodal(newCounter.spectrum)) {
+                System.out.println(newCounter);
+            }
+            PartBoundedDFSCompositions(n - part, newCounter, maxPart);
         }
 
     }
 
+    public static void DFSCompositions(int n, CompositionCounter tailCounter) {
+        DFSCompositions(n, tailCounter, n);
+    }
+
     public static void main(String[] args) {
-        DFSCompositions(34, new CompositionCounter(new ArrayList<Integer>()));
+        PartBoundedDFSCompositions(50, new CompositionCounter(new ArrayList<Integer>()),2);
         System.out.println("Done");
     }
 
