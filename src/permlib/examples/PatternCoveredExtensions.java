@@ -37,6 +37,5 @@ public class PatternCoveredExtensions {
     return true;
   }
   
-  
 
 }
