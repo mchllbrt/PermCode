@@ -1,15 +1,16 @@
 package permlib.examples;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import permlib.PermUtilities;
 import permlib.Permutation;
 import permlib.Permutations;
+import permlib.Symmetry;
 import permlib.classes.PermutationClass;
 import permlib.processor.PermCounter;
 import permlib.property.AvoidanceTest;
+import permlib.property.PermProperty;
 
 /**
  * Random investigations of Wilf-collapse.
@@ -28,10 +29,35 @@ public class WilfCollapse {
 //        showSpectrum(c, new Permutation("123546798"), 10,15);
 //        showSpectrum(c, new Permutation("132465789"), 10,15);
 
-        PermutationClass c = new PermutationClass("231", "4132");
-        for (int n = 2; n <= 8; n++) {
-            showSpectra(c, new PermutationClass("312", "231"), n, 2 * n);
-            System.out.println();
+//        PermutationClass c = new PermutationClass("321");
+//        separateSpectra(c, 9,15);
+//        for (int n = 3; n <= 8; n++) {
+//            showSpectra(c, n, 12);
+//            System.out.println();
+//        }
+        foo();
+
+    }
+
+    private static void foo() {
+        Permutation p = new Permutation("124679358");
+        Permutation q = new Permutation("124789356");
+        PermutationClass c = new PermutationClass(new Permutation("321"));
+        PermProperty ap = AvoidanceTest.getTest(p);
+        PermProperty aq = AvoidanceTest.getTest(q);
+        for (int n = 12; n <= 20; n++) {
+            long cp = 0;
+            long cq = 0;
+
+            for (Permutation t : new Permutations(c, n)) {
+                if (ap.isSatisfiedBy(t)) {
+                    cp++;
+                }
+                if (aq.isSatisfiedBy(t)) {
+                    cq++;
+                }
+            }
+            System.out.println(n + ": " + cp + " " + cq + " " + (cp == cq));
         }
 
     }
@@ -133,7 +159,11 @@ public class WilfCollapse {
 
     private static void showSpectra(PermutationClass c, int i, int high) {
         HashMap<ArrayList<Long>, HashSet<Permutation>> map = new HashMap<>();
-        for (Permutation p : new Permutations(c, i)) {
+        for (Permutation q : new Permutations(c, i - 2)) {
+            Permutation p = PermUtilities.sum(new Permutation("12"), q);
+            if (notRep(p)) {
+                continue;
+            }
             // System.out.print(p + ": ");
             PermCounter counter = new PermCounter(AvoidanceTest.getTest(p));
             ArrayList<Long> spec = new ArrayList<>();
@@ -149,15 +179,59 @@ public class WilfCollapse {
             map.get(spec).add(p);
         }
         for (ArrayList<Long> spec : map.keySet()) {
+            // if (map.get(spec).size() <= 1) continue;
             System.out.print(spec + " ");
             for (Permutation p : map.get(spec)) {
                 //System.out.print(wordForm(p) + " ");
                 //System.out.print(wf(p) + " ");
                 // System.out.print(wf312(p) + " ");
-                System.out.print(wfv(p) + " ");
+                System.out.print(p + " ");
             }
             System.out.println();
         }
+    }
+
+    private static void separateSpectra(PermutationClass c, int i, int high) {
+        HashSet<Permutation> ci = new HashSet<>();
+        for (Permutation p : new Permutations(c, i)) {
+            if (p.elements[0] == 0 && p.elements[1] == 1 && !notRep(p)) {
+                ci.add(p);
+            }
+        }
+        HashMap<ArrayList<Long>, HashSet<Permutation>> map = new HashMap<>();
+        HashMap<Permutation, ArrayList<Long>> specs = new HashMap<>();
+        for (Permutation p : ci) {
+            specs.put(p, new ArrayList<Long>());
+        }
+        int n = i + 1;
+        while (n <= high && !ci.isEmpty()) {
+            map.clear();
+            for (Permutation p : ci) {
+                PermCounter counter = new PermCounter(AvoidanceTest.getTest(p));
+                c.processPerms(n, counter);
+                specs.get(p).add(counter.getCount());
+                if (!map.containsKey(specs.get(p))) {
+                    map.put(specs.get(p), new HashSet<Permutation>());
+                }
+                map.get(specs.get(p)).add(p);
+            }
+            HashSet<Permutation> toRemove = new HashSet<>();
+            for (Permutation p : ci) {
+                if (map.get(specs.get(p)).size() <= 1) {
+                    System.out.println(specs.get(p) + " " + p);
+                    toRemove.add(p);
+                    map.remove(specs.get(p));
+                }
+            }
+            ci.removeAll(toRemove);
+
+            n++;
+        }
+
+        for (ArrayList<Long> spec : map.keySet()) {
+            System.out.println(spec + " " + map.get(spec));
+        }
+
     }
 
     private static Permutation[] sumComponents(Permutation q) {
@@ -269,5 +343,18 @@ public class WilfCollapse {
             }
             System.out.println();
         }
+    }
+
+    private static boolean notRep(Permutation p) {
+        if (Symmetry.RC.on(p).compareTo(p) < 0) {
+            return true;
+        }
+        if (Symmetry.INV.on(p).compareTo(p) < 0) {
+            return true;
+        }
+        if (Symmetry.IRC.on(p).compareTo(p) < 0) {
+            return true;
+        }
+        return false;
     }
 }

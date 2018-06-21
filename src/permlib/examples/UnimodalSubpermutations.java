@@ -49,7 +49,7 @@ public class UnimodalSubpermutations {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        doAnneal(26);
+        System.out.println(subspectrum(new Permutation(new int[] {4, 17, 11, 24, 7, 13, 20, 2, 15, 9, 22, 6, 19, 3, 16, 10, 23, 5, 12, 18, 1, 14, 8, 21}),1));
     }
 
     public static void do321(int n) {
