@@ -214,8 +214,6 @@ public class CompositionCounter {
         c.add(4);
         CompositionCounter cc = new CompositionCounter(c);
         System.out.println(cc.qPolynomial());
-        PartBoundedDFSCompositions(50, new CompositionCounter(new ArrayList<Integer>()),2);
-        System.out.println("Done");
     }
 
     private void computeCountsFrom(CompositionCounter tailCounter) {
