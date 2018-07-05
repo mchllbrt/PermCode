@@ -29,14 +29,9 @@ public class SubIncOsc {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-//        for(int n = 4; n <= 8; n++) {
-//            System.out.println(incosc(n,UP));
-//            System.out.println(incosc(n,DOWN));
-//        }
         HashSet<Permutation> basis = new HashSet<>();
         basis.add(new Permutation("321"));
         PermutationClass c = new PermutationClass(basis);
-        PermProperty a321 = PermUtilities.avoidanceTest(new Permutation("321"));
         for (int n = 4; n <= 8; n++) {
             for (Permutation p : new Permutations(c, n)) {
                 if (PermUtilities.PLUSINDECOMPOSABLE.isSatisfiedBy(p)) {
@@ -48,55 +43,55 @@ public class SubIncOsc {
             }
             c = new PermutationClass(basis);
         }
-        System.out.println();
-        PrincipalSpectra p = new PrincipalSpectra(new PermutationClass(basis));
-        for (int n = 2; n <= 10; n++) {
-            HashMap<ArrayList<Long>, HashSet<Permutation>> r = p.getSpectra(n, n + 5, false);
-            for (ArrayList<Long> s : r.keySet()) {
-                System.out.print(s + " ");
-                for (Permutation q : r.get(s)) {
-                    System.out.print(sumC(q) + " ");
-                }
-                System.out.println();
-            }
-            System.out.println();
-        }
+//        System.out.println();
+//        PrincipalSpectra p = new PrincipalSpectra(new PermutationClass(basis));
+//        for (int n = 2; n <= 10; n++) {
+//            HashMap<ArrayList<Long>, HashSet<Permutation>> r = p.getSpectra(n, n + 5, false);
+//            for (ArrayList<Long> s : r.keySet()) {
+//                System.out.print(s + " ");
+//                for (Permutation q : r.get(s)) {
+//                    System.out.print(sumC(q) + " ");
+//                }
+//                System.out.println();
+//            }
+//            System.out.println();
+//        }
 //        [2757, 6041, 13188, 28683, 62149] 
 //        (312)(2413)(312) (312)(312)(2413) (312)(231)(2413) 
 //        (2413)(312)(231) (312)(3142)(312) (2413)(231)(231) 
 //        (231)(312)(3142) (3142)(312)(312) (231)(3142)(231) 
 //        (231)(2413)(231) (231)(231)(3142) (3142)(231)(312)
-        
-        Permutation p312 = new Permutation("312");
-        Permutation p231 = new Permutation("231");
-        Permutation p2413 = new Permutation("2413");
-        Permutation p3142 = new Permutation("3142");
-        
-        Permutation q = sum(p312, p2413, p312);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p312, p312, p2413);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p312, p231, p2413);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p2413, p312, p231);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p312, p3142, p312);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p2413, p231, p231);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p231, p312, p3142);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p3142, p312, p312);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p231, p3142, p231);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p231, p2413, p231);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p231, p231, p3142);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        q = sum(p3142, p231, p312);
-        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
-        
+//        
+//        Permutation p312 = new Permutation("312");
+//        Permutation p231 = new Permutation("231");
+//        Permutation p2413 = new Permutation("2413");
+//        Permutation p3142 = new Permutation("3142");
+//        
+//        Permutation q = sum(p312, p2413, p312);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p312, p312, p2413);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p312, p231, p2413);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p2413, p312, p231);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p312, p3142, p312);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p2413, p231, p231);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p231, p312, p3142);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p3142, p312, p312);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p231, p3142, p231);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p231, p2413, p231);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p231, p231, p3142);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        q = sum(p3142, p231, p312);
+//        System.out.println(p.getSpectrum(q,19) + " " + sumC(q));
+//        
     }
 
     public static Permutation incosc(int n, boolean type) {

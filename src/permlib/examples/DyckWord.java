@@ -27,7 +27,7 @@ public class DyckWord {
         this.tail = tn;
     }
 
-    private DyckWord(int n) {
+    DyckWord(int n) {
         if (n <= 0) {
             throw new RuntimeException("Attempt to create empty word");
         }

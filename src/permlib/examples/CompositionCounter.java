@@ -207,6 +207,13 @@ public class CompositionCounter {
     }
 
     public static void main(String[] args) {
+        ArrayList<Integer> c = new ArrayList<>();
+        c.add(2);
+        c.add(3);
+        c.add(1);
+        c.add(4);
+        CompositionCounter cc = new CompositionCounter(c);
+        System.out.println(cc.qPolynomial());
         PartBoundedDFSCompositions(50, new CompositionCounter(new ArrayList<Integer>()),2);
         System.out.println("Done");
     }
@@ -224,6 +231,33 @@ public class CompositionCounter {
             }
         }
     }
+    
+    public String qPolynomial() {
+        StringBuilder result = new StringBuilder();
+        result.append(" 1 + ");
+        for(int i = 1; i < spectrum.length; i++) {
+            result.append(spectrum[i]);
+            result.append("*q^");
+            result.append(i);
+            if (i < spectrum.length-1) result.append(" + ");
+        }
+        result.append(";");
+        return result.toString();
+    }
+    
+    private static ArrayList<Integer> getComposition(int n, int index) {
+        if (n == 0) {
+            return new ArrayList<Integer>();
+        }
+        ArrayList<Integer> result = getComposition(n - 1, index / 2);
+        if (index % 2 == 0) {
+            result.add(1);
+        } else {
+            result.set(result.size() - 1, result.get(result.size() - 1) + 1);
+        }
+        return result;
+    }
+
 }
 
 //        for (int n = 26; n <= 30; n++) {
